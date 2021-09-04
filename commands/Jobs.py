@@ -4,12 +4,6 @@ from tapipy.errors import InvalidInputError
 class Jobs(TapisCommand):
     def __init__(self):
         TapisCommand.__init__(self)
-        self.set_option_set({
-            "-f": [ "path_to_file" ],
-            "-u": [ "url" ],
-            "-j": [ "json" ],
-            "--test": []
-        })
 
     def download(self, uuid, output_path) -> None:
         try:

@@ -43,7 +43,7 @@ class Files(TapisCommand):
     # Directories that don't exist in destination will be created
     def upload(self, system_id, path_to_file, destination) -> None:    
         # NOTE Tapipy client hasn't yet implemented the insert method in
-        # the files module. The function upload on the Tapis class handles
+        # the files module. The upload method on the Tapis class handles
         # this instead.
         try:
             self.client.upload(

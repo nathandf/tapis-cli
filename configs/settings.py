@@ -15,4 +15,6 @@ MODULES = [
 PASSWORD = "PASSWORD"
 DEFAULT_AUTH_METHOD = PASSWORD
 
-TENANT = "https://tacc.staging.tapis.io"
+ENV = "develop"
+TENANT = "tacc"
+BASE_URL = f"https://{TENANT}.{ENV}.tapis.io"

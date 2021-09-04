@@ -6,11 +6,11 @@ from configs import settings
 from core.Configuration import Configuration
 
 class Authenticator:
-    tenant = ""
+    base_url = ""
     auth_methods = settings.AUTH_METHODS
 
-    def __init__(self, tenant=settings.TENANT):
-        self.tenant = tenant
+    def __init__(self, base_url=settings.BASE_URL):
+        self.base_url = base_url
         self.logger = Logger()
         self.config = Configuration()
 
@@ -35,7 +35,7 @@ class Authenticator:
             self.validate_credentials(auth_method, self.config.credentials)
             try:
                 client = Tapis(
-                    base_url= self.tenant,
+                    base_url= self.base_url,
                     username=self.config.credentials["username"],
                     password=self.config.credentials["password"]
                 )
