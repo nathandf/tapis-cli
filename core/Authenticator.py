@@ -43,7 +43,7 @@ class Authenticator:
 
                 return client
             except:
-                e = sys.exec_info[0]
+                e = sys.exc_info[0]
                 self.logger.log(e.message)
         else:
             raise ValueError(f"Invlaid auth_method: {auth_method}. Valid auth_method: {settings.AUTH_METHODS}")
