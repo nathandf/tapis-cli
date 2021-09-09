@@ -1,6 +1,6 @@
 from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError
-import json
+import json, os
 
 class Files(TapisCommand):
     def __init__(self):
@@ -51,3 +51,18 @@ class Files(TapisCommand):
         except Exception as e:
             self.logger.error(e.message)
             self.exit(1)
+
+
+    def upload_folder(self, system_id, path_to_folder, dest_folder) -> None:
+        print("\nUploading files...\n")
+        for file in os.listdir(path_to_folder):
+            try:
+                self.client.upload(
+                    system_id = system_id,
+                    source_file_path = os.path.join(path_to_folder, file),
+                    dest_file_path = os.path.join(dest_folder, file)
+                )
+            except Exception as e:
+                self.logger.error(e.message)
+                self.exit(1)
+        self.logger.complete(f"Successfully uploaded files to {dest_folder}")
