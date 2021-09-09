@@ -62,7 +62,8 @@ class Files(TapisCommand):
                     source_file_path = os.path.join(path_to_folder, file),
                     dest_file_path = os.path.join(dest_folder, file)
                 )
+                self.logger.complete(f"Successfully uploaded {file} to {os.path.join(dest_folder, file)}")
             except Exception as e:
                 self.logger.error(e.message)
                 self.exit(1)
-        self.logger.complete(f"Successfully uploaded files to {dest_folder}")
+        self.logger.success(f"Successfully uploaded files to {dest_folder}")

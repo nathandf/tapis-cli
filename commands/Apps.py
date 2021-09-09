@@ -84,3 +84,20 @@ class Apps(TapisCommand):
             e = sys.exc_info()[0]
             self.logger.error( f"{e}" )
             self.exit(1)
+
+    # TODO test
+    def put(self, definition_file) -> None:
+        app_definition = json.loads(open(definition_file, "r").read())
+
+        try:
+            # Update select attributes defined by the system definition file.
+            self.client.apps.putApp(**app_definition)
+            self.logger.success(f"App {app_definition['appId']} has been updated")
+            return
+        except InvalidInputError as e:
+            self.logger.error(f"Invalid Input Error: '{e.message}'")
+            self.exit(1)
+        except:
+            e = sys.exc_info()[0]
+            self.logger.error( f"{e}" )
+            self.exit(1)

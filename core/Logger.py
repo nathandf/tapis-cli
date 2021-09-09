@@ -1,5 +1,5 @@
 class styles:
-    HEADER = '\033[95m'
+    DEBUG = '\033[95m'
     BLUE = '\033[94m'
     SUCCESS = '\033[92m'
     INFO = '\033[96m'
@@ -30,4 +30,7 @@ class Logger:
 
     def error(self, message=""):
         print(f"{styles.ERROR}Error:{styles.RESET} {message}")
+
+    def debug(self, message=""):
+        print(f"{styles.DEBUG}########## DEBUG ##########{styles.RESET}\n{message}\n{styles.DEBUG}######## END DEBUG ########{styles.RESET}")
     

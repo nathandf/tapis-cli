@@ -55,3 +55,13 @@ class Jobs(TapisCommand):
         except InvalidInputError as e:
             self.logger.error(e.message)
             self.exit(1)
+
+    # TODO Some error
+    def resubmit(self, uuid) -> None:
+        try:
+            self.client.jobs.resubmitJob(jobuuid=uuid)
+            self.logger.info(f"Job resubmitted. Uuid: {uuid}")
+            return
+        except InvalidInputError as e:
+            self.logger.error(e.message)
+            self.exit(1)

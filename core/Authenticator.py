@@ -35,7 +35,7 @@ class Authenticator:
             self.validate_credentials(auth_method, self.config.credentials)
             try:
                 client = Tapis(
-                    base_url= self.base_url,
+                    base_url=self.base_url,
                     username=self.config.credentials["username"],
                     password=self.config.credentials["password"]
                 )
