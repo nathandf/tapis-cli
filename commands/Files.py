@@ -5,13 +5,7 @@ import json
 class Files(TapisCommand):
     def __init__(self):
         TapisCommand.__init__(self)
-
-    def create(self, system_definition_file) -> None:
-        system_definition = json.loads(open(system_definition_file, "r").read())
-        self.client.files.insert(**system_definition)
-
-        return
-
+        
     def delete(self, system_id, path) -> None:
         try:
             self.client.files.delete(systemId=system_id, path=path)
@@ -51,6 +45,8 @@ class Files(TapisCommand):
                 source_file_path = path_to_file,
                 dest_file_path = destination
             )
+
+            self.logger.complete(f"Uploaded file '{path_to_file}' to {destination}")
             
         except Exception as e:
             self.logger.error(e.message)

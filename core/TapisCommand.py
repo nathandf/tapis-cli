@@ -20,7 +20,7 @@ class TapisCommand(Command):
         except:
             raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}")
 
-    def help(self):
+    def methods(self):
         all_methods = dir(getattr(self.client, type(self).__name__.lower()))
         methods = []
 

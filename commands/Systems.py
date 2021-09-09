@@ -32,45 +32,45 @@ class Systems(TapisCommand):
     def delete(self, system_id) -> None:
         try:
             self.client.systems.deleteSystem(systemId=system_id)
-            print(f"Deleted system with id '{system_id}'")
+            self.logger.info(f"Deleted system with id '{system_id}'")
             return
         except InvalidInputError:
-            print(f"System not found with id '{system_id}'")
+            self.logger.error(f"System not found with id '{system_id}'")
             return
 
     def get(self, system_id) -> None:
         try:
             system = self.client.systems.getSystem(systemId=system_id)
-            print(system)
+            self.logger.log(system)
             return
         except InvalidInputError:
-            print(f"System not found with id '{system_id}'")
+            self.logger.error(f"System not found with id '{system_id}'")
 
     def get_credentials(self):
             self.logger.warn("get_credentials not implemented")
 
     def get_permissions(self, system_id, username):
-            creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
-            self.logger.log(creds)
-            return
+        creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
+        self.logger.log(creds)
+        return
 
     def list(self) -> None:
         systems = self.client.systems.getSystems()
         if len(systems) > 0:
             for system in systems:
-                print(system.id)
+                self.logger.log(system.id)
             return
 
-        print(f"No systems found for user '{self.client.username}'")
+        self.logger.log(f"No systems found for user '{self.client.username}'")
         return
 
     def undelete(self, system_id) -> None:
         try:
             self.client.systems.undeleteSystem(systemId=system_id)
-            print(f"Recovered system with id '{system_id}'")
+            self.logger.success(f"Recovered system with id '{system_id}'")
             return
         except InvalidInputError:
-            print(f"Deleted system not found with id '{system_id}'")
+            self.logger.info(f"Deleted system not found with id '{system_id}'")
             return
 
     def update(self, system_definition_file) -> None:
@@ -79,12 +79,10 @@ class Systems(TapisCommand):
         try:
             # Update select attributes defined by the system definition file.
             self.client.systems.patchSystem(**system_definition)
+            self.logger.success(f"System '{system_definition.systemId}' updated")
             return
         except InvalidInputError as e:
-            print(f"Invalid Input Error: '{e.message}'")
-        except:
-            e = sys.exc_info()[0]
-            self.logger.error( f"{e}" )
+            self.logger.error(f"{e.message}")
 
     def update_creds(self, file):
         creds = json.loads(open(file, "r").read())

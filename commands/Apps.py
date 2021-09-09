@@ -5,11 +5,6 @@ from tapipy.errors import InvalidInputError, ServerDownError
 class Apps(TapisCommand):
     def __init__(self):
         TapisCommand.__init__(self)
-        self.set_option_set({
-            "-f": [ "path_to_file" ],
-            "-u": [ "url" ],
-            "-j": [ "json" ]
-        })
 
     def create(self, definition_file) -> None:
         try:
@@ -17,8 +12,8 @@ class Apps(TapisCommand):
             self.client.apps.createAppVersion(**definition)
             self.logger.success(f"App \'{definition['id']}\' created")
             return
-        except ServerDownError as e:
-            print(e)         
+        except (ServerDownError, InvalidInputError) as e:
+            self.logger.error(e)         
 
     def delete(self, id) -> None:
         try:
