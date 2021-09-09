@@ -8,7 +8,8 @@ class Systems(TapisCommand):
 
     def change_owner(self, system_id, username):
         self.client.systems.changeSystemOwner(systemId=system_id, userName=username)
-        
+        self.logger.complete(f"Changed owner of system '{system_id}' to {username}")
+
         return
 
     def create(self, definition_file: str) -> None:
@@ -42,19 +43,18 @@ class Systems(TapisCommand):
 
     def get_credentials(self):
             self.logger.warn("get_credentials not implemented")
-
-    def grant_perms(self, id, username, *args):
-        perms = { "permissions": [] }
-        for arg in args:
-            perms.permissions.append(arg.upper())
-
-        self.client.grantUserPerms(systemId=id, userName=username, permissions=json.dumps(perms))
-        self.logger.info(f"Permissions {args} granted to user '{username}'")
-
+ 
     def get_permissions(self, system_id, username):
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
         self.logger.log(creds)
         return
+
+    def grant_permissions(self, id, username, *args):
+        perms = [arg for arg in args]
+
+        # It turns out the expected input should be a JSONArray, NOT a JSONObject
+        self.client.systems.grantUserPerms(systemId=id, userName=username, permissions=perms)
+        self.logger.info(f"Permissions {args} granted to user '{username}'")
 
     def list(self) -> None:
         systems = self.client.systems.getSystems()

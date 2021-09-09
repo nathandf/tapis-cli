@@ -24,7 +24,6 @@ class Files(TapisCommand):
         except InvalidInputError:
             print(f"File '{path}' not found in system '{system_id}'")
             return
-
         
     def list(self, system_id, path) -> None:
         files = self.client.files.listFiles(systemId=system_id, path=path)
@@ -51,7 +50,6 @@ class Files(TapisCommand):
         except Exception as e:
             self.logger.error(e.message)
             self.exit(1)
-
 
     def upload_folder(self, system_id, path_to_folder, dest_folder) -> None:
         print("\nUploading files...\n")
