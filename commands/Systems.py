@@ -1,16 +1,10 @@
 from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError
-import json, sys
+import json
 
 class Systems(TapisCommand):
     def __init__(self):
         TapisCommand.__init__(self)
-        self.set_option_set({
-            "-f": [ "path_to_file" ],
-            "-u": [ "url" ],
-            "-j": [ "json" ],
-            "--test": []
-        })
 
     def change_owner(self, system_id, username):
         self.client.systems.changeSystemOwner(systemId=system_id, userName=username)
@@ -48,6 +42,14 @@ class Systems(TapisCommand):
 
     def get_credentials(self):
             self.logger.warn("get_credentials not implemented")
+
+    def grant_perms(self, id, username, *args):
+        perms = { "permissions": [] }
+        for arg in args:
+            perms.permissions.append(arg.upper())
+
+        self.client.grantUserPerms(systemId=id, userName=username, permissions=json.dumps(perms))
+        self.logger.info(f"Permissions {args} granted to user '{username}'")
 
     def get_permissions(self, system_id, username):
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
