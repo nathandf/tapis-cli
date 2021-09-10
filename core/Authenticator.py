@@ -48,7 +48,6 @@ class Authenticator:
         else:
             raise ValueError(f"Invlaid auth_method: {auth_method}. Valid auth_method: {settings.AUTH_METHODS}")
 
-
     def validate_credentials(self,
         auth_method: str, credentials: dict
     ) -> None:

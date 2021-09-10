@@ -41,7 +41,6 @@ class Configuration:
         for key in self.config["credentials"]:
             self.credentials[key] = self.config["credentials"][key]
 
-
     def configure(self):
         """
         Checks if the users credentials exist for the current authentication method 
