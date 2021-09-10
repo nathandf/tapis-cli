@@ -66,6 +66,13 @@ class Systems(TapisCommand):
         self.logger.log(f"No systems found for user '{self.client.username}'")
         return
 
+    def revokeperms(self, id, username, *args):
+        perms = [arg.upper() for arg in args]
+
+        # It turns out the expected input should be a JSONArray, NOT a JSONObject
+        self.client.systems.revokeUserPerms(systemId=id, userName=username, permissions=perms)
+        self.logger.info(f"Permissions {args} revoked from user '{username}'")
+
     def undelete(self, system_id) -> None:
         try:
             self.client.systems.undeleteSystem(systemId=system_id)

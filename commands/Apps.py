@@ -62,7 +62,7 @@ class Apps(TapisCommand):
         return
 
     def grantperms(self, id, username, *args):
-        perms = [ arg.upper() for arg in args]
+        perms = [arg.upper() for arg in args]
 
         # It turns out the expected input should be a JSONArray, NOT a JSONObject
         self.client.apps.grantUserPerms(appId=id, userName=username, permissions=perms)
@@ -77,6 +77,13 @@ class Apps(TapisCommand):
 
         print(f"No apps found for user '{self.client.username}'")
         return
+
+    def revokeperms(self, id, username, *args):
+        perms = [arg.upper() for arg in args]
+
+        # It turns out the expected input should be a JSONArray, NOT a JSONObject
+        self.client.apps.revokeUserPerms(appId=id, userName=username, permissions=perms)
+        self.logger.info(f"Permissions {args} revoked from user '{username}'")
 
     def undelete(self, id) -> None:
         try:
