@@ -6,6 +6,15 @@ class Systems(TapisCommand):
     def __init__(self):
         TapisCommand.__init__(self)
 
+    def available(self, system_id) -> None:
+        try:
+            system = self.client.systems.isEnabled(systemId=system_id)
+            status = "enabled" if system.aBool else "disabled" 
+            self.logger.info(f"The system {system_id} is {status}")
+            return
+        except InvalidInputError:
+            self.logger.error(f"System not found with id '{system_id}'")
+
     def change_owner(self, system_id, username):
         self.client.systems.changeSystemOwner(systemId=system_id, userName=username)
         self.logger.complete(f"Changed owner of system '{system_id}' to {username}")
@@ -32,6 +41,22 @@ class Systems(TapisCommand):
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'")
             return
+
+    def disable(self, system_id) -> None:
+        try:
+            self.client.systems.disableSystem(systemId=system_id)
+            self.logger.success(f"The system {system_id} was disabled")
+            return
+        except InvalidInputError:
+            self.logger.error(f"System not found with id '{system_id}'")          
+
+    def enable(self, system_id) -> None:
+        try:
+            self.client.systems.enableSystem(systemId=system_id)
+            self.logger.success(f"The system {system_id} was enabled")
+            return
+        except InvalidInputError:
+            self.logger.error(f"System not found with id '{system_id}'")        
 
     def get(self, system_id) -> None:
         try:
@@ -64,6 +89,15 @@ class Systems(TapisCommand):
             return
 
         self.logger.log(f"No systems found for user '{self.client.username}'")
+        return
+
+    def search(self, *args) -> None:
+        # Multiple SQL-like queries can be done in the same set of string.
+        # EX: "owner = <username> AND systemType = LINUX"
+        matched = self.client.systems.searchSystemsRequestBody(search=args)
+        for system in matched:
+            print(system)
+
         return
 
     def revokeperms(self, id, username, *args):

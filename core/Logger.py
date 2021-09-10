@@ -11,26 +11,26 @@ class styles:
 
 class Logger:
     def complete(self, message):
-        print(f"{styles.SUCCESS}{styles.BOLD}✓{styles.RESET} {message}")
+        print(f"\n{styles.SUCCESS}{styles.BOLD}✓{styles.RESET} {message}\n")
 
     def failed(self, message):
-        print(f"{styles.ERROR}{styles.BOLD}x{styles.RESET} {message}")
+        print(f"\n{styles.ERROR}{styles.BOLD}x{styles.RESET} {message}\n")
 
     def success(self, message):
-        print(f"{styles.SUCCESS}Success:{styles.RESET} {message}")
+        print(f"\n{styles.SUCCESS}Success:{styles.RESET} {message}\n")
 
     def log(self, message=""):
-        print(message)
+        print("\n", message, "\n")
 
     def info(self, message=""):
-        print(f"{styles.INFO}Info:{styles.RESET} {message}")
+        print(f"\n{styles.INFO}Info:{styles.RESET} {message}\n")
 
     def warn(self, message=""):
-        print(f"{styles.WARNING}Warning:{styles.RESET} {message}")
+        print(f"\n{styles.WARNING}Warning:{styles.RESET} {message}\n")
 
     def error(self, message=""):
-        print(f"{styles.ERROR}Error:{styles.RESET} {message}")
+        print(f"\n{styles.ERROR}Error:{styles.RESET} {message}\n")
 
     def debug(self, message=""):
-        print(f"{styles.DEBUG}########## DEBUG ##########{styles.RESET}\n{message}\n{styles.DEBUG}######## END DEBUG ########{styles.RESET}")
+        print(f"\n{styles.DEBUG}########## DEBUG ##########{styles.RESET}\n{message}\n{styles.DEBUG}######## END DEBUG ########{styles.RESET}\n")
     
