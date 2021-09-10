@@ -56,13 +56,13 @@ class Apps(TapisCommand):
             self.logger.error(f"{e.message}")
             self.exit(1)
 
-    def get_permissions(self, app_id, username):
+    def getperms(self, app_id, username):
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
         return
 
-    def grant_permissions(self, id, username, *args):
-        perms = [arg for arg in args]
+    def grantperms(self, id, username, *args):
+        perms = [ arg.upper() for arg in args]
 
         # It turns out the expected input should be a JSONArray, NOT a JSONObject
         self.client.apps.grantUserPerms(appId=id, userName=username, permissions=perms)

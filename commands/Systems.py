@@ -41,16 +41,16 @@ class Systems(TapisCommand):
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'")
 
-    def get_credentials(self):
+    def getcreds(self):
             self.logger.warn("get_credentials not implemented")
  
-    def get_permissions(self, system_id, username):
+    def getperms(self, system_id, username):
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
         self.logger.log(creds)
         return
 
-    def grant_permissions(self, id, username, *args):
-        perms = [arg for arg in args]
+    def grantperms(self, id, username, *args):
+        perms = [arg.upper() for arg in args]
 
         # It turns out the expected input should be a JSONArray, NOT a JSONObject
         self.client.systems.grantUserPerms(systemId=id, userName=username, permissions=perms)
