@@ -1,5 +1,6 @@
 from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError
+from datetime import datetime
 
 class Jobs(TapisCommand):
     def __init__(self):
@@ -45,9 +46,15 @@ class Jobs(TapisCommand):
         jobs = self.client.jobs.getJobList()
         self.logger.log(jobs)
 
-    # NOTE the requirement on description is a bug in the api. Leave
-    # description as required for now
-    def submit(self, name, app_id, app_version, description) -> None:
+    def submit(self, app_id, app_version, *args) -> None:
+        # Set the name and description to datetime-appid-username
+        name = f"{datetime.now()}-{app_id}-{self.client.username}"
+        description = name
+        # If the user specified args after the appid and appversion, we assume they
+        # are passing name in the first arg and description in the second
+        name = args[0] if len(args) >= 1 else name
+        description = args[0] if len(args) > 1 else description
+
         try:
             job = self.client.jobs.submitJob(name=name, appId=app_id, appVersion=app_version, description=description)
             self.logger.info(f"Job submitted. Uuid: {job.uuid}")
