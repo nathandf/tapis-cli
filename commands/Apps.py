@@ -1,39 +1,79 @@
-import json, sys
+import json
+import sys
+
 from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError, ServerDownError
 
 class Apps(TapisCommand):
+    """ Contains all of the CRUD functions associated with applications. """
+
     def __init__(self):
         TapisCommand.__init__(self)
 
+    def available(self, app_id) -> None:
+        # Check if an application is currently enabled.
+        try:
+            app = self.client.apps.isEnabled(appId=app_id)
+            status = "enabled" if app.aBool else "disabled" 
+            self.logger.info(f"The app {app_id} is {status}")
+            return
+        except InvalidInputError:
+            self.logger.error(f"App not found with id '{app_id}'")
+
     def change_owner(self, app_id, username):
+        # Change the owner of an application (you may lose access to an app
+        # if you change the owner to another user and they don't grant you
+        # permissions).
         self.client.apps.changeAppOwner(appId=app_id, userName=username)
         self.logger.complete(f"Changed owner of app '{app_id}' to {username}")
 
         return
 
-    def create(self, definition_file) -> None:
+    def create(self, app_definition_file) -> None:
+        # Create a new application from an app definition JSON file.
         try:
-            definition = json.loads(open(definition_file, "r").read())
+            definition = json.loads(open(app_definition_file, "r").read())
             self.client.apps.createAppVersion(**definition)
             self.logger.success(f"App \'{definition['id']}\' created")
             return
         except (ServerDownError, InvalidInputError) as e:
             self.logger.error(e)         
 
-    def delete(self, id) -> None:
+    def delete(self, app_id) -> None:
+        # "Soft" delete an application; it will not appear in queries. 
+        # Apps are still present in the environment and may be undeleted.
         try:
-            self.client.apps.deleteApp(appId=id)
-            print(f"Deleted app with id '{id}'")
+            self.client.apps.deleteApp(appId=app_id)
+            print(f"Deleted app with id '{app_id}'")
             return
         except InvalidInputError:
-            print(f"App not found with id '{id}'")
+            print(f"App not found with id '{app_id}'")
             return
 
-    def get(self, id) -> None:
+    def disable(self, app_id) -> None:
+        # Mark (all versions of) an application as unavailable for use.
         try:
-            app = self.client.apps.getAppLatestVersion(appId=id)
+            self.client.apps.disableApp(appId=app_id)
+            self.logger.success(f"The app {app_id} was disabled")
+            return
+        except InvalidInputError:
+            self.logger.error(f"App not found with id '{app_id}'")          
+
+    def enable(self, app_id) -> None:
+        # Mark (all versions of) an application as available for use.
+        try:
+            self.client.apps.enableApp(appId=app_id)
+            self.logger.success(f"The app {app_id} was enabled")
+            return
+        except InvalidInputError:
+            self.logger.error(f"App not found with id '{app_id}'") 
+
+    def get(self, app_id) -> None:
+        # Retrieve the details of an application's latest version.
+        try:
+            app = self.client.apps.getAppLatestVersion(appId=app_id)
             self.logger.log(app)
+            print()
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}")
@@ -43,9 +83,10 @@ class Apps(TapisCommand):
             self.logger.error(f"{e.message}")
             self.exit(1)
 
-    def getversion(self, id, version) -> None:
+    def getversion(self, app_id, version) -> None:
+        # Retrieve the details of the specified version of an application.
         try:
-            app = self.client.apps.getApp(appId=id, appVersion=version)
+            app = self.client.apps.getApp(appId=app_id, appVersion=version)
             self.logger.log(app)
             return
         except InvalidInputError as e:
@@ -57,45 +98,36 @@ class Apps(TapisCommand):
             self.exit(1)
 
     def getperms(self, app_id, username):
+        # Get the permissions that a specified user has on a target application.
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
         return
 
-    def grantperms(self, id, username, *args):
+    def grantperms(self, app_id, username, *args):
+        # Give permissions to a specified user on a target application.
         perms = [arg.upper() for arg in args]
 
-        # It turns out the expected input should be a JSONArray, NOT a JSONObject
-        self.client.apps.grantUserPerms(appId=id, userName=username, permissions=perms)
+        # The expected input should be a JSONArray, NOT a JSONObject.
+        self.client.apps.grantUserPerms(appId=app_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {args} granted to user '{username}'")
 
     def list(self) -> None:
+        # List every application on the systems in this tenant and environment.
         apps = self.client.apps.getApps()
         if len(apps) > 0:
+            print()
             for app in apps:
-                print(app.id)
+                self.logger.log(app.id)
+            print()
             return
 
         print(f"No apps found for user '{self.client.username}'")
         return
 
-    def revokeperms(self, id, username, *args):
-        perms = [arg.upper() for arg in args]
-
-        # It turns out the expected input should be a JSONArray, NOT a JSONObject
-        self.client.apps.revokeUserPerms(appId=id, userName=username, permissions=perms)
-        self.logger.info(f"Permissions {args} revoked from user '{username}'")
-
-    def undelete(self, id) -> None:
-        try:
-            self.client.apps.undeleteApp(appId=id)
-            print(f"Recovered app with id '{id}'")
-            return
-        except InvalidInputError:
-            print(f"Deleted app not found with id '{id}'")
-            return
-
-    def update(self, definition_file) -> None:
-        app_definition = json.loads(open(definition_file, "r").read())
+    def patch(self, app_definition_file) -> None:
+        # Update selected attributes of an application using an app definition
+        # JSON file containing only the required and specified attributes. 
+        app_definition = json.loads(open(app_definition_file, "r").read())
 
         try:
             # Update select attributes defined by the system definition file.
@@ -110,9 +142,10 @@ class Apps(TapisCommand):
             self.logger.error( f"{e}" )
             self.exit(1)
 
-    # TODO test
-    def put(self, definition_file) -> None:
-        app_definition = json.loads(open(definition_file, "r").read())
+    def put(self, app_definition_file) -> None:
+        # Update ALL attributes of an application using an app definition JSON
+        # file that contains all the same attributes used to create the app.
+        app_definition = json.loads(open(app_definition_file, "r").read())
 
         try:
             # Update select attributes defined by the system definition file.
@@ -126,3 +159,31 @@ class Apps(TapisCommand):
             e = sys.exc_info()[0]
             self.logger.error( f"{e}" )
             self.exit(1)
+
+    def revokeperms(self, app_id, username, *args):
+        # Revoke permissions from a specified user on a target application.
+        perms = [arg.upper() for arg in args]
+
+        # The expected input should be a JSONArray, NOT a JSONObject
+        self.client.apps.revokeUserPerms(appId=app_id, userName=username, permissions=perms)
+        self.logger.info(f"Permissions {args} revoked from user '{username}'")
+
+    def search(self, *args) -> None:
+        # Retrieve details for applications using attributes as search parameters.
+        # Multiple SQL-like queries can be done in the same set of string.
+        # EX: "owner = <username> AND systemType = LINUX"
+        matched = self.client.apps.searchAppsRequestBody(search=args)
+        for app in matched:
+            print(app)
+        
+        return
+
+    def undelete(self, app_id) -> None:
+        # Undelete an applications that has been "soft" deleted.
+        try:
+            self.client.apps.undeleteApp(appId=app_id)
+            print(f"Recovered app with id '{app_id}'")
+            return
+        except InvalidInputError:
+            print(f"Deleted app not found with id '{app_id}'")
+            return
