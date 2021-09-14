@@ -18,14 +18,13 @@ class Authenticator:
         auth_method: str = settings.DEFAULT_AUTH_METHOD
     ) -> Union[Tapis, None]:
 
-        # If there are no credentials in the credentials dict, return none
+        # If there are no credentials in the credentials dict, throw error
         if not bool(self.config.credentials):
             # Add the credentials from the config 
             # file to this Configuration object's credentials dict
-            if "credentials" not in self.config.sections():
-                self.logger.error("Tapis CLI not configured.")
-                self.logger.log("Run `tapis auth configure`")
-                sys.exit(1)
+            self.logger.error("Tapis CLI not configured.")
+            self.logger.log("Run `tapis auth configure`")
+            sys.exit(1)
 
         # Authenticate using the provided auth method. Raise exception
         # if provided credentials do not meet requirements
