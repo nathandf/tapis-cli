@@ -25,5 +25,5 @@ tapis-cli can be set up and run in 2 ways; Locally, and in a Docker container.
 
 ## Running Commands
 ### General Usage
-$`tapis [category] [command] [action] [args]`
+$`tapis [category] [command] [args]`
 

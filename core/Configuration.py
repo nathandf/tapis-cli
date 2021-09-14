@@ -17,14 +17,14 @@ class Configuration:
         # Intialize and set the configparser to the Configuration object and
         # get the credentials from the config file
         self.config = ConfigParser()
-        self.config.read(settings.CREDENTIALS_FILE)
+        self.config.read(settings.CONFIG_FILE)
 
         # If the credentials file specified in the settings does not exist,
         # create it.
-        if not os.path.isfile(settings.CREDENTIALS_FILE):
-            print(f"Creating config file '{settings.CREDENTIALS_FILE}'")
+        if not os.path.isfile(settings.CONFIG_FILE):
+            print(f"Creating config file '{settings.CONFIG_FILE}'")
             self.config["credentials"] = {}
-            with open(settings.CREDENTIALS_FILE, "w") as file:
+            with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 
         # Create the credentials section if it doesn't exsit. (It's possible 
@@ -32,7 +32,7 @@ class Configuration:
         # the file exists) 
         if "credentials" not in self.config.sections():
             self.config["credentials"] = {}
-            with open(settings.CREDENTIALS_FILE, "w") as file:
+            with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 
 
@@ -79,7 +79,7 @@ class Configuration:
             self.config["credentials"]["username"] = username
             self.config["credentials"]["password"] = password
 
-            with open(settings.CREDENTIALS_FILE, "w") as file:
+            with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 
             # Set the username and password in the Configuration's credientials

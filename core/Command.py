@@ -2,7 +2,6 @@ from core.Logger import Logger
 import sys, re, types
 
 class Command:
-    options_set = { "--default": [] }
     options = []
     action = "help"
     logger = None
@@ -14,13 +13,13 @@ class Command:
     def help(self, **args):
         """
         \nGeneral usage:
-        $tapis [category] [command] [action] [args]
+        $tapis [category] [command] [args]
         \nExamples:
         - tapis systems get [systemId]
         - tapis files upload [systems] [path/to/local/file] [destination/folder]
         - tapis systems update [path/to/definition/file]
         - tapis apps create [path/to/definition/file]
-        - tapis jobs submit [name] [appName] [appVesion] [description]
+        - tapis jobs submit [appName] [appVersion]
         \nCommands:"""
         print(self.help.__doc__)
         methods = self.get_methods(self)
@@ -38,9 +37,6 @@ class Command:
             self.logger.error(f"Command {type(self).__name__} has no action '{action}'")
             self.exit(1)
         self.action = action
-
-    def set_option_set(self, option_set: dict = {}):
-        self.option_set = option_set
     
     def set_options(self, options: list):
         self.options = options
