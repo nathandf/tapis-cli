@@ -1,3 +1,5 @@
+""" Handles TAPIS functionality relating to applications. """
+
 import json
 import sys
 
@@ -6,12 +8,11 @@ from tapipy.errors import InvalidInputError, ServerDownError
 
 class Apps(TapisCommand):
     """ Contains all of the CRUD functions associated with applications. """
-
     def __init__(self):
         TapisCommand.__init__(self)
 
     def available(self, app_id) -> None:
-        # Check if an application is currently enabled.
+        """ Check if an application is currently enabled. """
         try:
             app = self.client.apps.isEnabled(appId=app_id)
             status = "enabled" if app.aBool else "disabled" 
@@ -21,16 +22,18 @@ class Apps(TapisCommand):
             self.logger.error(f"App not found with id '{app_id}'")
 
     def change_owner(self, app_id, username):
-        # Change the owner of an application (you may lose access to an app
-        # if you change the owner to another user and they don't grant you
-        # permissions).
+        """
+        Change the owner of an application (you may lose access to an app
+        if you change the owner to another user and they don't grant you
+        permissions).
+        """
         self.client.apps.changeAppOwner(appId=app_id, userName=username)
         self.logger.complete(f"Changed owner of app '{app_id}' to {username}")
 
         return
 
     def create(self, app_definition_file) -> None:
-        # Create a new application from an app definition JSON file.
+        """ Create a new application from an app definition JSON file. """
         try:
             definition = json.loads(open(app_definition_file, "r").read())
             self.client.apps.createAppVersion(**definition)
@@ -40,8 +43,10 @@ class Apps(TapisCommand):
             self.logger.error(e)         
 
     def delete(self, app_id) -> None:
-        # "Soft" delete an application; it will not appear in queries. 
-        # Apps are still present in the environment and may be undeleted.
+        """
+        "Soft" delete an application; it will not appear in queries. 
+        Apps are still present in the environment and may be undeleted.
+        """
         try:
             self.client.apps.deleteApp(appId=app_id)
             print(f"Deleted app with id '{app_id}'")
@@ -51,7 +56,7 @@ class Apps(TapisCommand):
             return
 
     def disable(self, app_id) -> None:
-        # Mark (all versions of) an application as unavailable for use.
+        """ Mark (all versions of) an application as unavailable for use. """
         try:
             self.client.apps.disableApp(appId=app_id)
             self.logger.success(f"The app {app_id} was disabled")
@@ -60,7 +65,7 @@ class Apps(TapisCommand):
             self.logger.error(f"App not found with id '{app_id}'")          
 
     def enable(self, app_id) -> None:
-        # Mark (all versions of) an application as available for use.
+        """ Mark (all versions of) an application as available for use. """
         try:
             self.client.apps.enableApp(appId=app_id)
             self.logger.success(f"The app {app_id} was enabled")
@@ -69,7 +74,7 @@ class Apps(TapisCommand):
             self.logger.error(f"App not found with id '{app_id}'") 
 
     def get(self, app_id) -> None:
-        # Retrieve the details of an application's latest version.
+        """ Retrieve the details of an application's latest version. """
         try:
             app = self.client.apps.getAppLatestVersion(appId=app_id)
             self.logger.log(app)
@@ -84,7 +89,7 @@ class Apps(TapisCommand):
             self.exit(1)
 
     def getversion(self, app_id, version) -> None:
-        # Retrieve the details of the specified version of an application.
+        """ Retrieve the details of the specified version of an application. """
         try:
             app = self.client.apps.getApp(appId=app_id, appVersion=version)
             self.logger.log(app)
@@ -98,13 +103,13 @@ class Apps(TapisCommand):
             self.exit(1)
 
     def getperms(self, app_id, username):
-        # Get the permissions that a specified user has on a target application.
+        """ Get the permissions that a specified user has on a target application. """
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
         return
 
     def grantperms(self, app_id, username, *args):
-        # Give permissions to a specified user on a target application.
+        """ Give permissions to a specified user on a target application. """
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject.
@@ -112,7 +117,7 @@ class Apps(TapisCommand):
         self.logger.info(f"Permissions {args} granted to user '{username}'")
 
     def list(self) -> None:
-        # List every application on the systems in this tenant and environment.
+        """ List every application on the systems in this tenant and environment. """
         apps = self.client.apps.getApps()
         if len(apps) > 0:
             print()
@@ -125,8 +130,10 @@ class Apps(TapisCommand):
         return
 
     def patch(self, app_definition_file) -> None:
-        # Update selected attributes of an application using an app definition
-        # JSON file containing only the required and specified attributes. 
+        """
+        Update selected attributes of an application using an app definition
+        JSON file containing only the required and specified attributes. 
+        """
         app_definition = json.loads(open(app_definition_file, "r").read())
 
         try:
@@ -143,8 +150,10 @@ class Apps(TapisCommand):
             self.exit(1)
 
     def put(self, app_definition_file) -> None:
-        # Update ALL attributes of an application using an app definition JSON
-        # file that contains all the same attributes used to create the app.
+        """
+        Update ALL attributes of an application using an app definition JSON
+        file that contains all the same attributes used to create the app.
+        """
         app_definition = json.loads(open(app_definition_file, "r").read())
 
         try:
@@ -161,7 +170,7 @@ class Apps(TapisCommand):
             self.exit(1)
 
     def revokeperms(self, app_id, username, *args):
-        # Revoke permissions from a specified user on a target application.
+        """ Revoke permissions from a specified user on a target application. """
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject
@@ -169,9 +178,11 @@ class Apps(TapisCommand):
         self.logger.info(f"Permissions {args} revoked from user '{username}'")
 
     def search(self, *args) -> None:
-        # Retrieve details for applications using attributes as search parameters.
-        # Multiple SQL-like queries can be done in the same set of string.
-        # EX: "owner = <username> AND systemType = LINUX"
+        """
+        Retrieve details for applications using attributes as search parameters.
+        Multiple SQL-like queries can be done in the same set of string.
+        EX: "owner = <username> AND systemType = LINUX"
+        """
         matched = self.client.apps.searchAppsRequestBody(search=args)
         for app in matched:
             print(app)
@@ -179,7 +190,7 @@ class Apps(TapisCommand):
         return
 
     def undelete(self, app_id) -> None:
-        # Undelete an applications that has been "soft" deleted.
+        """ Undelete an applications that has been "soft" deleted. """
         try:
             self.client.apps.undeleteApp(appId=app_id)
             print(f"Recovered app with id '{app_id}'")

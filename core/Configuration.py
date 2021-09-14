@@ -1,4 +1,8 @@
-import os, sys
+""" Handles the setup of authorization credentials. """
+
+import os
+import sys
+
 from configs import settings
 from configparser import ConfigParser
 from getpass import getpass
@@ -7,22 +11,21 @@ from core.Logger import Logger
 class Configuration:
     """
     Writes user credentials to the configs.ini based on the AUTH_METHOD 
-    provided in the settings.py
+    provided in the settings.py file.
     """
     auth_method: str = settings.AUTH_METHOD
     config: ConfigParser = None
     credentials: dict = {}
 
     def __init__(self):
-
         # Intialize and set the configparser to the Configuration object and
         # get the credentials from the config file
         self.config = ConfigParser()
         self.config.read(settings.CONFIG_FILE)
         self.logger = Logger()
 
-        # Add the credentials from the config 
-        # file to this Configuration object's credentials dict
+        # Add the credentials from the config file to 
+        # this Configuration object's credentials dict
         if "credentials" in self.config.sections():
             for key in self.config["credentials"]:
                 self.credentials[key] = self.config["credentials"][key]
@@ -33,7 +36,6 @@ class Configuration:
         set in the settings.py file. If it doesn't, the user will be prompted to 
         provide the credentials for the defined authentication method.
         """
-
         # If the configs.ini specified in the settings does not exist,
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
@@ -90,8 +92,7 @@ class Configuration:
             with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 
-            # Set the username and password in the Configuration's credientials
-            # dict
+            # Set the username and password in the Configuration's credientials dict
             self.credentials = {"username": username, "password": password}
 
             return
@@ -104,7 +105,7 @@ class Configuration:
         """
         Prompts the user for input described in the message. If secret is set
         to true, user input is not shown. If the user doesn't put any input,
-        warn them that they must input a value and call this function recursively
+        warn them that they must input a value and call this function recursively.
         """
         # If secret set to False, allow user input to be visible and return it
         # If secret set to True, do not allow user input to be visible and return it
@@ -127,15 +128,13 @@ class Configuration:
         """
         yn = input(message)
 
-        # If use select no, exit the script
+        # If user selects 'no' then exit the script, if the user selects 'yes'
+        # then pass to continue the script, otherwise exit the script if the
+        # user doesn't provide any valid selections.
         if yn == "n" or yn == "N":
             sys.exit(1)
-
-        # If user selects yes, pass to continue the script
         elif yn == "y" or yn == "Y":
             return
-
-        # If user doesn't provide any valid selections, exit the script
         else:
             print("Invalid option required. Must type 'y' for yes or 'n' for no.")
             sys.exit(1)
