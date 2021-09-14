@@ -2,10 +2,11 @@ import os, sys
 from configs import settings
 from configparser import ConfigParser
 from getpass import getpass
+from core.Logger import Logger
 
 class Configuration:
     """
-    Writes user credentials to the credentials file based on the AUTH_METHOD 
+    Writes user credentials to the configs.ini based on the AUTH_METHOD 
     provided in the settings.py
     """
     auth_method: str = settings.AUTH_METHOD
@@ -18,8 +19,22 @@ class Configuration:
         # get the credentials from the config file
         self.config = ConfigParser()
         self.config.read(settings.CONFIG_FILE)
+        self.logger = Logger()
 
-        # If the credentials file specified in the settings does not exist,
+        # Add the credentials from the config 
+        # file to this Configuration object's credentials dict
+        if "credentials" in self.config.sections():
+            for key in self.config["credentials"]:
+                self.credentials[key] = self.config["credentials"][key]
+
+    def configure(self):
+        """
+        Checks if the users credentials exist for the current authentication method 
+        set in the settings.py file. If it doesn't, the user will be prompted to 
+        provide the credentials for the defined authentication method.
+        """
+
+        # If the configs.ini specified in the settings does not exist,
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
             print(f"Creating config file '{settings.CONFIG_FILE}'")
@@ -41,23 +56,16 @@ class Configuration:
         for key in self.config["credentials"]:
             self.credentials[key] = self.config["credentials"][key]
 
-    def configure(self):
-        """
-        Checks if the users credentials exist for the current authentication method 
-        set in the settings.py file. If it doesn't, the user will be prompted to 
-        provide the correct credentials for the defined authentication method.
-        """
-
-        # If the AUTH_METHODS doesn't have one of the values in AUTH_METHODS,
+        # If the AUTH_METHOD doesn't have one of the values in AUTH_METHODS,
         # notify the user there is an error in the settings.py file.
         if settings.AUTH_METHOD not in settings.AUTH_METHODS:
-            raise ValueError(f"Misconfigured settings.py. The AUTH_METHOD provided does not exist in the list AUTH_METHODS. AUTH_METHOD={settings.AUTH_METHODS}")
+            raise ValueError(f"Misconfigured settings.py. The AUTH_METHOD provided does not exist in the list AUTH_METHODS. AUTH_METHODS={settings.AUTH_METHODS}")
 
         # Check the current authentication method and prompt the user to provide
         # the appropriate credentials if they do not exist.
         if settings.AUTH_METHOD == settings.PASSWORD:
 
-            # Fetch the username and password from the credentials file if
+            # Fetch the username and password from the configs.ini if
             # they exist.
             username = None if not hasattr(self.config["credentials"], "username") else self.config["credentials"]["username"]
             password = None if not hasattr(self.config["credentials"], "password") else self.config["credentials"]["password"]
