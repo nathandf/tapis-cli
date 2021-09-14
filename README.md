@@ -24,7 +24,7 @@ tapis-cli can be set up and run in 2 ways; Locally, and in a Docker container.
 ### Container setup
 
 ## Configuring Tapis CLI
-Tapis CLI must first be configured. Run the following command and add your credentials
+Tapis CLI must first be configured. Run the following command and add your credentials\
 $`tapis auth configure`
 
 ### General Usage
