@@ -1,5 +1,5 @@
 from importlib import import_module
-from core.Logger import Logger
+from utils.Logger import Logger
 import re, sys
 
 class Resolver:

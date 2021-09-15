@@ -1,4 +1,4 @@
-from core.Logger import Logger
+from utils.Logger import Logger
 import sys, re, types
 
 class Category:

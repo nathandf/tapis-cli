@@ -1,5 +1,5 @@
 from tapipy.tapis import Tapis
-from core.Logger import Logger
+from utils.Logger import Logger
 from typing import Union
 import sys
 from configs import settings
