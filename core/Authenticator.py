@@ -22,8 +22,8 @@ class Authenticator:
         if not bool(self.config.credentials):
             # Add the credentials from the config 
             # file to this Configuration object's credentials dict
-            self.logger.error("Tapis CLI not configured.")
-            self.logger.log("Run `tapis auth configure`")
+            self.logger.error("Tapis CLI not configured. Run the following command to add your credentials:")
+            self.logger.log("`tapis auth configure`")
             sys.exit(1)
 
         # Authenticate using the provided auth method. Raise exception

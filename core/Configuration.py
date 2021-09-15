@@ -50,7 +50,6 @@ class Configuration:
             with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
 
-
         # Add the credentials from the config 
         # file to this Configuration object's credentials dict
         for key in self.config["credentials"]:
