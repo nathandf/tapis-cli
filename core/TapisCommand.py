@@ -1,16 +1,16 @@
 from tapipy.tapis import Tapis
-from core.Command import Command
+from core.Category import Category
 from core.Authenticator import Authenticator as Auth
 from typing import Union
 from configs import settings
 import re
 
-class TapisCommand(Command):
+class TapisCommand(Category):
 
     client: Union[Tapis, None] = None
 
     def __init__(self):
-        Command.__init__(self)
+        Category.__init__(self)
         try:
             self.client = Auth().authenticate()
             if self.client == None:
