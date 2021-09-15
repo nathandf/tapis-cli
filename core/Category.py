@@ -1,9 +1,9 @@
 from core.Logger import Logger
 import sys, re, types
 
-class Command:
+class Category:
     options = []
-    action = "help"
+    command = "help"
     logger = None
     exit = sys.exit
 
@@ -26,23 +26,17 @@ class Command:
         for method in methods:
             print(f"\t- {method}")
 
-    # Run the list method on child class, then use return value
-    # to run get action
-    # TODO Implement bash dialog
-    def select(self, *args):
-        self.logger.warn(f"Select command for {type(self).__name__} has not yet been supported")
-
-    def set_action(self, action: str) -> None:
-        if action not in dir(self):
-            self.logger.error(f"Command {type(self).__name__} has no action '{action}'")
+    def set_command(self, command: str) -> None:
+        if command not in dir(self):
+            self.logger.error(f"Category {type(self).__name__} has no command '{command}'")
             self.exit(1)
-        self.action = action
+        self.command = command
     
     def set_options(self, options: list):
         self.options = options
 
     def execute(self, args) -> None:
-        method = getattr(self, self.action)
+        method = getattr(self, self.command)
         method(*args)
 
     def get_methods(self, instance: object) -> list:
