@@ -3,13 +3,13 @@
 import json
 import sys
 
-from core.TapisCommand import TapisCommand
+from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError, ServerDownError
 
-class Apps(TapisCommand):
+class Apps(TapipyCategory):
     """ Contains all of the CRUD functions associated with applications. """
     def __init__(self):
-        TapisCommand.__init__(self)
+        TapipyCategory.__init__(self)
 
     def available(self, app_id) -> None:
         """ Check if an application is currently enabled. """

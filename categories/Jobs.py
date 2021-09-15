@@ -1,10 +1,10 @@
-from core.TapisCommand import TapisCommand
+from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
 from datetime import datetime
 
-class Jobs(TapisCommand):
+class Jobs(TapipyCategory):
     def __init__(self):
-        TapisCommand.__init__(self)
+        TapipyCategory.__init__(self)
 
     def download(self, uuid, output_path) -> None:
         try:

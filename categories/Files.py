@@ -2,13 +2,13 @@
 
 import os
 
-from core.TapisCommand import TapisCommand
+from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
 
-class Files(TapisCommand):
+class Files(TapipyCategory):
     """ Contains all of the CRUD functions associated with files. """
     def __init__(self):
-        TapisCommand.__init__(self)
+        TapipyCategory.__init__(self)
         
     def delete(self, system_id, path) -> None:
         """

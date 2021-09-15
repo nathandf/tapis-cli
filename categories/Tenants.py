@@ -1,9 +1,9 @@
-from core.TapisCommand import TapisCommand
+from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
 
-class Tenants(TapisCommand):
+class Tenants(TapipyCategory):
     def __init__(self):
-        TapisCommand.__init__(self)
+        TapipyCategory.__init__(self)
 
     def get(self, tenant_id) -> None:
         try:

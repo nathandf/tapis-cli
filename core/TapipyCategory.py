@@ -5,7 +5,7 @@ from typing import Union
 from configs import settings
 import re
 
-class TapisCommand(Category):
+class TapipyCategory(Category):
 
     client: Union[Tapis, None] = None
 
