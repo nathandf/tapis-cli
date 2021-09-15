@@ -14,17 +14,17 @@ class Systems(TapisCommand):
         try:
             system = self.client.systems.isEnabled(systemId=system_id)
             status = "enabled" if system.aBool else "disabled" 
-            self.logger.info(f"The system {system_id} is {status}")
+            self.logger.info(f"The system {system_id} is {status}\n")
             return
         except InvalidInputError:
-            self.logger.error(f"System not found with id '{system_id}'")
+            self.logger.error(f"System not found with id '{system_id}'\n")
 
     def change_owner(self, system_id, username):
         # Change the owner of a system (you may lose access to a system
         # if you change the owner to another user and they don't grant you
         # permissions).
         self.client.systems.changeSystemOwner(systemId=system_id, userName=username)
-        self.logger.complete(f"Changed owner of system '{system_id}' to {username}")
+        self.logger.complete(f"Changed owner of system '{system_id}' to {username}\n")
 
         return
 
@@ -32,7 +32,7 @@ class Systems(TapisCommand):
         # Create a new system from a system definition JSON file.
         definition = json.loads(open(system_definition_file, "r").read())
         self.client.systems.createSystem(**definition)
-        self.logger.success(f"System \'{definition['id']}\' created")
+        self.logger.success(f"System \'{definition['id']}\' created\n")
 
         return
 
@@ -50,10 +50,10 @@ class Systems(TapisCommand):
         # Systems are still present in the environment and may be undeleted.
         try:
             self.client.systems.deleteSystem(systemId=system_id)
-            self.logger.info(f"Deleted system with id '{system_id}'")
+            self.logger.info(f"Deleted system with id '{system_id}'\n")
             return
         except InvalidInputError:
-            self.logger.error(f"System not found with id '{system_id}'")
+            self.logger.error(f"System not found with id '{system_id}'\n")
             return
 
     def disable(self, system_id) -> None:
@@ -79,6 +79,7 @@ class Systems(TapisCommand):
         try:
             system = self.client.systems.getSystem(systemId=system_id)
             self.logger.log(system)
+            print()
             return
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'")
@@ -91,6 +92,7 @@ class Systems(TapisCommand):
         # Get the permissions that a specified user has on a target system.
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
         self.logger.log(creds)
+        print()
         return
 
     def grantperms(self, system_id, username, *args):
@@ -100,6 +102,7 @@ class Systems(TapisCommand):
         # The expected input should be a JSONArray, NOT a JSONObject.
         self.client.systems.grantUserPerms(systemId=system_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {args} granted to user '{username}'")
+        print()
 
     def list(self) -> None:
         # List every system in this tenant and environment.
@@ -123,6 +126,7 @@ class Systems(TapisCommand):
             # Update select attributes defined by the system definition file.
             self.client.systems.patchSystem(**system_definition)
             self.logger.success(f"System '{system_definition.systemId}' updated")
+            print()
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}")
@@ -136,6 +140,7 @@ class Systems(TapisCommand):
             # Update select attributes defined by the system definition file.
             self.client.apps.putSystem(**system_definition)
             self.logger.success(f"System {system_definition['appId']} has been updated")
+            print()
             return
         except InvalidInputError as e:
             self.logger.error(f"Invalid Input Error: '{e.message}'")
@@ -148,6 +153,7 @@ class Systems(TapisCommand):
         # The expected input should be a JSONArray, NOT a JSONObject
         self.client.systems.revokeUserPerms(systemId=system_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {args} revoked from user '{username}'")
+        print()
 
     def search(self, *args) -> None:
         # Retrieve details for systems using attributes as search parameters.
@@ -156,17 +162,18 @@ class Systems(TapisCommand):
         matched = self.client.systems.searchSystemsRequestBody(search=args)
         for system in matched:
             print(system)
-
+        print()
         return
 
     def undelete(self, system_id) -> None:
         # Undelete an applications that has been "soft" deleted.
         try:
             self.client.systems.undeleteSystem(systemId=system_id)
-            self.logger.success(f"Recovered system with id '{system_id}'")
+            self.logger.success(f"Recovered system with id '{system_id}'\n")
             return
         except InvalidInputError:
-            self.logger.info(f"Deleted system not found with id '{system_id}'")
+            self.logger.info(f"Deleted system not found with id '{system_id}'\n")
+            print()
             return
 
     def update_creds(self, file):
