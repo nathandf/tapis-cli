@@ -1,10 +1,11 @@
-""" Handles TAPIS functionality relating to applications. """
+""" Handles TAPIS functionality related to applications. """
 
 import json
 import sys
 
 from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError, ServerDownError
+
 
 class Apps(TapisCommand):
     """ Contains all of the CRUD functions associated with applications. """
@@ -16,10 +17,10 @@ class Apps(TapisCommand):
         try:
             app = self.client.apps.isEnabled(appId=app_id)
             status = "enabled" if app.aBool else "disabled" 
-            self.logger.info(f"The app {app_id} is {status}")
+            self.logger.info(f"The app '{app_id}' is {status}\n")
             return
         except InvalidInputError:
-            self.logger.error(f"App not found with id '{app_id}'")
+            self.logger.error(f"App not found with id '{app_id}'\n")
 
     def change_owner(self, app_id, username):
         """
@@ -28,7 +29,7 @@ class Apps(TapisCommand):
         permissions).
         """
         self.client.apps.changeAppOwner(appId=app_id, userName=username)
-        self.logger.complete(f"Changed owner of app '{app_id}' to {username}")
+        self.logger.complete(f"\nChanged owner of app '{app_id}' to '{username}'\n")
 
         return
 
@@ -37,10 +38,11 @@ class Apps(TapisCommand):
         try:
             definition = json.loads(open(app_definition_file, "r").read())
             self.client.apps.createAppVersion(**definition)
-            self.logger.success(f"App \'{definition['id']}\' created")
+            self.logger.success(f"App \'{definition['id']}\' created\n")
             return
         except (ServerDownError, InvalidInputError) as e:
-            self.logger.error(e)         
+            self.logger.error(e)
+            print()         
 
     def delete(self, app_id) -> None:
         """
@@ -49,29 +51,29 @@ class Apps(TapisCommand):
         """
         try:
             self.client.apps.deleteApp(appId=app_id)
-            print(f"Deleted app with id '{app_id}'")
+            self.logger.info(f"Deleted app with id '{app_id}'\n")
             return
         except InvalidInputError:
-            print(f"App not found with id '{app_id}'")
+            self.logger.error(f"App not found with id '{app_id}'\n")
             return
 
     def disable(self, app_id) -> None:
         """ Mark (all versions of) an application as unavailable for use. """
         try:
             self.client.apps.disableApp(appId=app_id)
-            self.logger.success(f"The app {app_id} was disabled")
+            self.logger.success(f"The app '{app_id}' was disabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"App not found with id '{app_id}'")          
+            self.logger.error(f"App not found with id '{app_id}'\n")          
 
     def enable(self, app_id) -> None:
         """ Mark (all versions of) an application as available for use. """
         try:
             self.client.apps.enableApp(appId=app_id)
-            self.logger.success(f"The app {app_id} was enabled")
+            self.logger.success(f"The app '{app_id}' was enabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"App not found with id '{app_id}'") 
+            self.logger.error(f"App not found with id '{app_id}'\n") 
 
     def get(self, app_id) -> None:
         """ Retrieve the details of an application's latest version. """
@@ -81,11 +83,11 @@ class Apps(TapisCommand):
             print()
             return
         except InvalidInputError as e:
-            self.logger.error(f"{e.message}")
+            self.logger.error(f"{e.message}\n")
             self.exit(1)
         except:
             e = sys.exc_info()[0]
-            self.logger.error(f"{e.message}")
+            self.logger.error(f"{e.message}\n")
             self.exit(1)
 
     def getversion(self, app_id, version) -> None:
@@ -93,19 +95,21 @@ class Apps(TapisCommand):
         try:
             app = self.client.apps.getApp(appId=app_id, appVersion=version)
             self.logger.log(app)
+            print()
             return
         except InvalidInputError as e:
-            self.logger.error(f"{e.message}")
+            self.logger.error(f"{e.message}\n")
             self.exit(1)
         except:
             e = sys.exc_info()[0]
-            self.logger.error(f"{e.message}")
+            self.logger.error(f"{e.message}\n")
             self.exit(1)
 
     def getperms(self, app_id, username):
         """ Get the permissions that a specified user has on a target application. """
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
+        print()
         return
 
     def grantperms(self, app_id, username, *args):
@@ -114,7 +118,7 @@ class Apps(TapisCommand):
 
         # The expected input should be a JSONArray, NOT a JSONObject.
         self.client.apps.grantUserPerms(appId=app_id, userName=username, permissions=perms)
-        self.logger.info(f"Permissions {args} granted to user '{username}'")
+        self.logger.info(f"Permissions {perms} granted to user '{username}'\n")
 
     def list(self) -> None:
         """ List every application on the systems in this tenant and environment. """
@@ -126,7 +130,7 @@ class Apps(TapisCommand):
             print()
             return
 
-        print(f"No apps found for user '{self.client.username}'")
+        self.logger.log(f"No apps found for user '{self.client.username}'\n")
         return
 
     def patch(self, app_definition_file) -> None:
@@ -139,14 +143,14 @@ class Apps(TapisCommand):
         try:
             # Update select attributes defined by the system definition file.
             self.client.apps.patchApp(**app_definition)
-            self.logger.success(f"App {app_definition['appId']} has been updated")
+            self.logger.success(f"App '{app_definition['appId']}' has been updated\n")
             return
         except InvalidInputError as e:
-            self.logger.error(f"Invalid Input Error: '{e.message}'")
+            self.logger.error(f"Invalid Input Error: '{e.message}'\n")
             self.exit(1)
         except:
             e = sys.exc_info()[0]
-            self.logger.error( f"{e}" )
+            self.logger.error( f"{e}\n" )
             self.exit(1)
 
     def put(self, app_definition_file) -> None:
@@ -159,14 +163,14 @@ class Apps(TapisCommand):
         try:
             # Update select attributes defined by the system definition file.
             self.client.apps.putApp(**app_definition)
-            self.logger.success(f"App {app_definition['appId']} has been updated")
+            self.logger.success(f"App '{app_definition['appId']}' has been updated\n")
             return
         except InvalidInputError as e:
-            self.logger.error(f"Invalid Input Error: '{e.message}'")
+            self.logger.error(f"Invalid Input Error: '{e.message}'\n")
             self.exit(1)
         except:
             e = sys.exc_info()[0]
-            self.logger.error( f"{e}" )
+            self.logger.error( f"{e}\n" )
             self.exit(1)
 
     def revokeperms(self, app_id, username, *args):
@@ -175,7 +179,7 @@ class Apps(TapisCommand):
 
         # The expected input should be a JSONArray, NOT a JSONObject
         self.client.apps.revokeUserPerms(appId=app_id, userName=username, permissions=perms)
-        self.logger.info(f"Permissions {args} revoked from user '{username}'")
+        self.logger.info(f"Permissions {perms} revoked from user '{username}'\n")
 
     def search(self, *args) -> None:
         """
@@ -186,15 +190,15 @@ class Apps(TapisCommand):
         matched = self.client.apps.searchAppsRequestBody(search=args)
         for app in matched:
             print(app)
-        
+        print()
         return
 
     def undelete(self, app_id) -> None:
         """ Undelete an applications that has been "soft" deleted. """
         try:
             self.client.apps.undeleteApp(appId=app_id)
-            print(f"Recovered app with id '{app_id}'")
+            self.logger.success(f"Recovered app with id '{app_id}'\n")
             return
         except InvalidInputError:
-            print(f"Deleted app not found with id '{app_id}'")
+            self.logger.error(f"Deleted app not found with id '{app_id}'\n")
             return

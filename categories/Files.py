@@ -1,9 +1,10 @@
-""" Handles TAPIS functionality relating to files. """
+""" Handles TAPIS functionality related to files. """
 
 import os
 
 from core.TapisCommand import TapisCommand
 from tapipy.errors import InvalidInputError
+
 
 class Files(TapisCommand):
     """ Contains all of the CRUD functions associated with files. """
@@ -16,25 +17,27 @@ class Files(TapisCommand):
         """
         try:
             self.client.files.delete(systemId=system_id, path=path)
-            print(f"Deleted file '{path}' in system '{system_id}'")
+            self.logger.info(f"Deleted file '{path}' in system '{system_id}'\n")
             return
         except InvalidInputError:
-            print(f"File '{path}' not found in system '{system_id}'")
+            self.logger.error(f"File '{path}' not found in system '{system_id}'\n")
             return
 
     def get_contents(self, system_id, path) -> None:
         """ Retrieves the contents of the specified file in the target system. """
-        print(dir(self.client.files.getContents))
         try:
-            self.client.files.getContents(systemId=system_id, path=path)
-            self.logger.complete(f"Fetched contents of file {path} fetched")
+            contents = self.client.files.getContents(systemId=system_id, path=path)
+            print()
+            self.logger.complete(f"Fetched contents of file '{path}':\n")
+            print(contents, "\n")
             return
         except InvalidInputError:
-            print(f"File '{path}' not found in system '{system_id}'")
+            self.logger.error(f"File '{path}' not found in system '{system_id}'\n")
             return
         
     def list(self, system_id, path) -> None:
         """ List every file on the target system. """
+        # BUG Seems to be breaking a LOT... very rarely works.
         files = self.client.files.listFiles(systemId=system_id, path=path)
         for file in files:
             print(file.name)
