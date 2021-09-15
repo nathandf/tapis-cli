@@ -6,7 +6,7 @@ import sys
 from configs import settings
 from configparser import ConfigParser
 from getpass import getpass
-from core.Logger import Logger
+from utils.Logger import Logger
 
 class Configuration:
     """

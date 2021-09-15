@@ -2,14 +2,15 @@
 
 from datetime import datetime
 
-from core.TapisCommand import TapisCommand
+from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
 
 
-class Jobs(TapisCommand):
+class Jobs(TapipyCategory):
     """ Contains all of the CRUD functions associated with jobs. """
+
     def __init__(self):
-        TapisCommand.__init__(self)
+        TapipyCategory.__init__(self)
 
     def download(self, uuid, output_path) -> None:
         """ Downloads the output of a completed job. """

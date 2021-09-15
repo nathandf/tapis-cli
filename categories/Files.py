@@ -2,19 +2,18 @@
 
 import os
 
-from core.TapisCommand import TapisCommand
+from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
 
 
-class Files(TapisCommand):
+class Files(TapipyCategory):
     """ Contains all of the CRUD functions associated with files. """
+
     def __init__(self):
-        TapisCommand.__init__(self)
+        TapipyCategory.__init__(self)
         
     def delete(self, system_id, path) -> None:
-        """
-        Deletes the specified file from the target system.
-        """
+        """ Deletes the specified file from the target system. """
         try:
             self.client.files.delete(systemId=system_id, path=path)
             self.logger.info(f"Deleted file '{path}' in system '{system_id}'\n")
