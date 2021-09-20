@@ -22,7 +22,7 @@ class Router:
 
     def resolve(self, args: list[str]) -> tuple[Category, list[str]]:
         """ The command is resolved here. """
-        # The first step of command resolution is to check if a
+        # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args. If it does,
         # import it
         category_name = args[0]
