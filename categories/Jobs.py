@@ -8,7 +8,6 @@ from tapipy.errors import InvalidInputError
 
 class Jobs(TapipyCategory):
     """ Contains all of the CRUD functions associated with jobs. """
-
     def __init__(self):
         TapipyCategory.__init__(self)
 
@@ -19,7 +18,8 @@ class Jobs(TapipyCategory):
             self.logger.complete(f"\nDownload complete for job '{uuid}'\n")
             return
         except InvalidInputError as e:
-            self.logger.error(f"{e.message}")
+            self.logger.error(f"{e.message}\n")
+            return
 
     def get(self, uuid) -> None:
         """ Retrieve the details of a specified job. """
@@ -30,6 +30,7 @@ class Jobs(TapipyCategory):
             return
         except InvalidInputError:
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
+            return
 
     def history(self, uuid) -> None:
         """ Retrieve the computation history of a specified job. """
@@ -58,6 +59,8 @@ class Jobs(TapipyCategory):
         jobs = self.client.jobs.getJobList()
         self.logger.log(jobs)
 
+        return
+
     def submit(self, app_id, app_version, *args) -> None:
         """ Submit a job to be run using a specified application and its version. """
         # Set the name and description to datetime-appid-username
@@ -76,12 +79,12 @@ class Jobs(TapipyCategory):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    # TODO Some error
     def resubmit(self, uuid) -> None:
         """ Re-submit a job using a specified job UUID. """
+        # TODO Some error
         try:
             self.client.jobs.resubmitJob(jobuuid=uuid)
-            self.logger.info(f"Job resubmitted. UUID: {uuid}")
+            self.logger.info(f"Job resubmitted. UUID: {uuid}\n")
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}\n")

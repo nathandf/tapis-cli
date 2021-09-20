@@ -1,12 +1,16 @@
-from tapipy.tapis import Tapis
+""" Handles the functionality of TAPIS commands specifically. """
+
+import re
+from typing import Union
+
+from configs import settings
 from core.Category import Category
 from core.Authenticator import Authenticator as Auth
-from typing import Union
-from configs import settings
-import re
+from tapipy.tapis import Tapis
+
 
 class TapipyCategory(Category):
-
+    """ A TAPIS-specific category parser. """
     client: Union[Tapis, None] = None
 
     def __init__(self):
@@ -18,9 +22,10 @@ class TapipyCategory(Category):
         except SystemExit:
             self.exit()
         except:
-            raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}")
+            raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
 
-    def methods(self):
+    def methods(self) -> None:
+        """ Returns all of the methods associated with a particular category. """
         all_methods = dir(getattr(self.client, type(self).__name__.lower()))
         methods = []
 
@@ -30,3 +35,4 @@ class TapipyCategory(Category):
                 methods.append(method)
 
         self.logger.log(methods)
+        return

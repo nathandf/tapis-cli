@@ -8,7 +8,6 @@ from tapipy.errors import InvalidInputError
 
 class Systems(TapipyCategory):
     """ Contains all of the CRUD functions associated with systems. """
-
     def __init__(self):
         TapipyCategory.__init__(self)
 
@@ -22,7 +21,7 @@ class Systems(TapipyCategory):
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'\n")
 
-    def change_owner(self, system_id, username):
+    def change_owner(self, system_id, username) -> None:
         """ 
         Change the owner of a system (you may lose access to a system if you
         change the owner to another user and they don't grant you permissions).
@@ -48,6 +47,7 @@ class Systems(TapipyCategory):
         system_definition = json.loads(open(system_definition_file, "r").read())
         self.client.systems.createUserCredential(**system_definition)
         self.logger.info(f"User credentials created for user '{system_definition['userName']}'\n")
+        
         return
 
     def delete(self, system_id) -> None:
@@ -70,7 +70,8 @@ class Systems(TapipyCategory):
             self.logger.success(f"The system '{system_id}' was disabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"System not found with id '{system_id}'\n")          
+            self.logger.error(f"System not found with id '{system_id}'\n")   
+            return       
 
     def enable(self, system_id) -> None:
         """ Mark (all versions of) a system as available for use. """
@@ -79,7 +80,8 @@ class Systems(TapipyCategory):
             self.logger.success(f"The system '{system_id}' was enabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"System not found with id '{system_id}'\n")        
+            self.logger.error(f"System not found with id '{system_id}'\n")     
+            return   
 
     def get(self, system_id) -> None:
         """ Retrieve the details of an system's latest version. """
@@ -90,20 +92,24 @@ class Systems(TapipyCategory):
             return
         except InvalidInputError:
             self.logger.error(f"System not found with id '{system_id}'\n")
+            return
 
-    def getcreds(self):
+    def getcreds(self) -> None:
         """ Get a specified user's credentials. """
         # TODO
         self.logger.warn("get_credentials not implemented\n")
+
+        return
  
-    def getperms(self, system_id, username):
+    def getperms(self, system_id, username) -> None:
         """ Get the permissions that a specified user has on a target system. """
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
         self.logger.log(creds)
         print()
+
         return
 
-    def grantperms(self, system_id, username, *args):
+    def grantperms(self, system_id, username, *args) -> None:
         """ Give permissions to a specified user on a target application. """
         perms = [arg.upper() for arg in args]
 
@@ -111,6 +117,8 @@ class Systems(TapipyCategory):
         self.client.systems.grantUserPerms(systemId=system_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {args} granted to user '{username}'\n")
         print()
+
+        return
 
     def list(self) -> None:
         """ List every system in this tenant and environment. """
@@ -121,8 +129,8 @@ class Systems(TapipyCategory):
                 self.logger.log(system.id)
             print()
             return
-
         self.logger.log(f"No systems found for user '{self.client.username}'\n")
+
         return
 
     def patch(self, system_definition_file) -> None:
@@ -139,6 +147,7 @@ class Systems(TapipyCategory):
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}\n")
+            return
 
     def put(self, system_definition_file) -> None:
         """
@@ -160,7 +169,7 @@ class Systems(TapipyCategory):
         """ Revoke permissions from a specified user on a target system. """
         perms = [arg.upper() for arg in args]
 
-        # The expected input should be a JSONArray, NOT a JSONObject
+        # The expected input should be a JSONArray, NOT a JSONObject.
         self.client.systems.revokeUserPerms(systemId=system_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {perms} revoked from user '{username}'\n")
 
@@ -176,6 +185,7 @@ class Systems(TapipyCategory):
         for system in matched:
             print(system)
         print()
+
         return
 
     def undelete(self, system_id) -> None:
@@ -188,7 +198,9 @@ class Systems(TapipyCategory):
             self.logger.info(f"Deleted system not found with id '{system_id}'\n")
             return
 
-    def update_creds(self, file):
+    def update_creds(self, file) -> None:
         """ Update user credentials using a JSON definition file containing credentials. """
         creds = json.loads(open(file, "r").read())
         self.client.systems.createUserCredential(**creds)
+
+        return

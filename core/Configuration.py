@@ -8,6 +8,7 @@ from configparser import ConfigParser
 from getpass import getpass
 from utils.Logger import Logger
 
+
 class Configuration:
     """
     Writes user credentials to the configs.ini based on the AUTH_METHOD 
@@ -19,18 +20,18 @@ class Configuration:
 
     def __init__(self):
         # Intialize and set the configparser to the Configuration object and
-        # get the credentials from the config file
+        # get the credentials from the config file.
         self.config = ConfigParser()
         self.config.read(settings.CONFIG_FILE)
         self.logger = Logger()
 
         # Add the credentials from the config file to 
-        # this Configuration object's credentials dict
+        # this Configuration object's credentials dict.
         if "credentials" in self.config.sections():
             for key in self.config["credentials"]:
                 self.credentials[key] = self.config["credentials"][key]
 
-    def configure(self):
+    def configure(self) -> None:
         """
         Checks if the users credentials exist for the current authentication method 
         set in the settings.py file. If it doesn't, the user will be prompted to 
@@ -39,7 +40,7 @@ class Configuration:
         # If the configs.ini specified in the settings does not exist,
         # create it.
         if not os.path.isfile(settings.CONFIG_FILE):
-            print(f"Creating config file '{settings.CONFIG_FILE}'")
+            print(f"Creating config file '{settings.CONFIG_FILE}'\n")
             self.config["credentials"] = {}
             with open(settings.CONFIG_FILE, "w") as file:
                 self.config.write(file)
@@ -60,7 +61,7 @@ class Configuration:
         # If the AUTH_METHOD doesn't have one of the values in AUTH_METHODS,
         # notify the user there is an error in the settings.py file.
         if settings.AUTH_METHOD not in settings.AUTH_METHODS:
-            raise ValueError(f"Misconfigured settings.py. The AUTH_METHOD provided does not exist in the list AUTH_METHODS. AUTH_METHODS={settings.AUTH_METHODS}")
+            raise ValueError(f"Misconfigured settings.py. The AUTH_METHOD provided does not exist in the list AUTH_METHODS. AUTH_METHODS={settings.AUTH_METHODS}\n")
 
         # Check the current authentication method and prompt the user to provide
         # the appropriate credentials if they do not exist.
@@ -98,7 +99,7 @@ class Configuration:
 
         # The user has misconfigured their settings.py. Let them know.
         else:
-            raise ValueError(f"AUTH_METHOD provided in the settings.py is invalid. Available AUTH_METHODS: {settings.AUTH_METHODS}")
+            raise ValueError(f"AUTH_METHOD provided in the settings.py is invalid. Available AUTH_METHODS: {settings.AUTH_METHODS}\n")
 
     def prompt_not_none(self, message: str, secret: bool = False) -> str:
         """
@@ -115,12 +116,12 @@ class Configuration:
         value = prompt(message)
 
         if value == None:
-            print("You cannot provide and empty value.")
+            print("You cannot provide and empty value.\n")
             return self._prompt_not_one(message, secret)
 
         return value
 
-    def prompt_yes_no_exit(self, message):
+    def prompt_yes_no_exit(self, message) -> None:
         """
         Prompts the user for yes or no input. The script will exit if anything
         except for a 'yes' answer is selected.
@@ -135,6 +136,6 @@ class Configuration:
         elif yn == "y" or yn == "Y":
             return
         else:
-            print("Invalid option required. Must type 'y' for yes or 'n' for no.")
+            print("Invalid option required. Must type 'y' for yes or 'n' for no.\n")
             sys.exit(1)
             
