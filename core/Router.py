@@ -11,30 +11,36 @@ class Router:
     def __init__(self):
         self.logger = Logger()
 
-    def resolve(self, args: list[str]) -> tuple:
+    def resolve(self, args: list[str]) -> tuple[Category, list[str]]:
         # The first step of command resolution is to check if a
         # user-defined category exists by the name provided in args. If it does,
         # import it
-        if find_spec(f"categories.{args[0].capitalize()}") is not None:
+        category_name = args[0]
+        if find_spec(f"categories.{category_name.capitalize()}") is not None:
             # Import and instantiate the category
-            module = import_module( f"categories.{args[0].capitalize()}", "./" )
-            category = getattr(module, f"{args[0].capitalize()}")()
+            module = import_module( f"categories.{category_name.capitalize()}", "./" )
+            category = getattr(module, f"{category_name.capitalize()}")()
 
             # Set the options on the category.
             options = self.parse_options(args[1:])
             category.set_options(options)
 
             # Set the command on the category.
-            category.set_command(args[self.command_index])
+            command_name = args[self.command_index]
+            if not hasattr(category, args[self.command_index]):
+                # If the command being invoked doesn't exist on the category, 
+                # return a generic instance of TapipyCategory
+                # TODO implement tapipy category
+                pass
+                
 
-            # If the command being invoked doesn't exist on the category, 
-            # return a generic instance of TapipyCategory
-            # TODO implement tapipy category
+            category.set_command(command_name)
 
             # Return the category with command and options set.
             # Every element in the args list after the command index are arguments
             # for the category.
-            return (category, args[self.command_index+1:])
+            command_arguments = args[self.command_index+1:]
+            return (category, command_arguments)
 
         # If a user-defined category doesn't exist, return a generic instance 
         # of TapipyCategory
@@ -43,7 +49,7 @@ class Router:
         # No category was found by the provided name
         # TODO Remove logging and exit line below once tapipy category is
         # implemented
-        self.logger.error(f"Invalid category. '{args[0]}' category not implemented")
+        self.logger.error(f"Invalid category. '{category_name}' category not implemented")
         sys.exit(1)
 
     def parse_options(self, args: list[str]):

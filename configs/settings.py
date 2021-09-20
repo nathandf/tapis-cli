@@ -1,3 +1,8 @@
+APP_REGISTRY = [
+    "core",
+    "tapis"
+]
+
 AUTH_METHOD = "PASSWORD"
 
 AUTH_METHODS = [ "PASSWORD" ]
