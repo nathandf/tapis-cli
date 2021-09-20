@@ -8,7 +8,6 @@ from tapipy.errors import InvalidInputError
 
 class Files(TapipyCategory):
     """ Contains all of the CRUD functions associated with files. """
-
     def __init__(self):
         TapipyCategory.__init__(self)
         
@@ -85,4 +84,4 @@ class Files(TapipyCategory):
             except Exception as e:
                 self.logger.error(e.message)
                 self.exit(1)
-        self.logger.success(f"Successfully uploaded files to {destination_folder}")
+        self.logger.success(f"Successfully uploaded files to {destination_folder}\n")

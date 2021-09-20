@@ -1,12 +1,11 @@
-""" Handles the configuring of credentials """
+""" Handles the configuring of credentials. """
 
 from core.Category import Category
 from core.Configuration import Configuration
 
 
 class Auth(Category):
-    """ Authorization credentials are parsed here. """
-
+    """ Configurations are parsed here. """
     def __init__(self):
         Category.__init__(self)
         self.config = Configuration()

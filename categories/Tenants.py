@@ -17,7 +17,8 @@ class Tenants(TapipyCategory):
             print()
             return
         except InvalidInputError:
-            self.logger.error(f"Tenant not found with id '{tenant_id}'")
+            self.logger.error(f"Tenant not found with id '{tenant_id}'\n")
+            return
 
     def list(self) -> None:
         """ List every tenant on the site. """

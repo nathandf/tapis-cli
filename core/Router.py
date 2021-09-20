@@ -1,10 +1,19 @@
+""" Handles the resolving (parsing) of commands and their options. """
+
+import re
+import sys
+
+from core.Category import Category
 from importlib import import_module
 from importlib.util import find_spec
 from utils.Logger import Logger
-import re, sys
-from core.Category import Category
+
 
 class Router:
+    """
+    Commands and their options are passed into the router/resolver.
+    The options are parsed and then the command is resolved.
+    """
     command_index = 1
     logger = None
 
@@ -12,9 +21,9 @@ class Router:
         self.logger = Logger()
 
     def resolve(self, args: list[str]) -> tuple:
-        # The first step of command resolution is to check if a
-        # user-defined category exists by the name provided in args. If it does,
-        # import it
+        """ The command is resolved here. """
+        # The first step of command resolution is to check if a user-defined
+        # category exists by the name provided in args. If it does, import it.
         if find_spec(f"categories.{args[0].capitalize()}") is not None:
             # Import and instantiate the category
             module = import_module( f"categories.{args[0].capitalize()}", "./" )
@@ -43,10 +52,11 @@ class Router:
         # No category was found by the provided name
         # TODO Remove logging and exit line below once tapipy category is
         # implemented
-        self.logger.error(f"Invalid category. '{args[0]}' category not implemented")
+        self.logger.error(f"Invalid category. '{args[0]}' category not implemented.\n")
         sys.exit(1)
 
     def parse_options(self, args: list[str]):
+        """ Checks to make sure the options are valid. """
         # Regex pattern for options.
         option_pattern = re.compile(r"^[-]{1,2}[a-z]+[a-z_]*$")
 

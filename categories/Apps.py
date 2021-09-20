@@ -9,7 +9,6 @@ from tapipy.errors import InvalidInputError, ServerDownError
 
 class Apps(TapipyCategory):
     """ Contains all of the CRUD functions associated with applications. """
-    
     def __init__(self):
         TapipyCategory.__init__(self)
 
@@ -23,7 +22,7 @@ class Apps(TapipyCategory):
         except InvalidInputError:
             self.logger.error(f"App not found with id '{app_id}'\n")
 
-    def change_owner(self, app_id, username):
+    def change_owner(self, app_id, username) -> None:
         """
         Change the owner of an application (you may lose access to an app
         if you change the owner to another user and they don't grant you
@@ -106,20 +105,23 @@ class Apps(TapipyCategory):
             self.logger.error(f"{e.message}\n")
             self.exit(1)
 
-    def getperms(self, app_id, username):
+    def getperms(self, app_id, username) -> None:
         """ Get the permissions that a specified user has on a target application. """
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
         print()
+
         return
 
-    def grantperms(self, app_id, username, *args):
+    def grantperms(self, app_id, username, *args) -> None:
         """ Give permissions to a specified user on a target application. """
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject.
         self.client.apps.grantUserPerms(appId=app_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {perms} granted to user '{username}'\n")
+
+        return
 
     def list(self) -> None:
         """ List every application on the systems in this tenant and environment. """
@@ -130,8 +132,8 @@ class Apps(TapipyCategory):
                 self.logger.log(app.id)
             print()
             return
-
         self.logger.log(f"No apps found for user '{self.client.username}'\n")
+
         return
 
     def patch(self, app_definition_file) -> None:
@@ -174,13 +176,15 @@ class Apps(TapipyCategory):
             self.logger.error( f"{e}\n" )
             self.exit(1)
 
-    def revokeperms(self, app_id, username, *args):
+    def revokeperms(self, app_id, username, *args) -> None:
         """ Revoke permissions from a specified user on a target application. """
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject
         self.client.apps.revokeUserPerms(appId=app_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {perms} revoked from user '{username}'\n")
+
+        return
 
     def search(self, *args) -> None:
         """
@@ -192,6 +196,7 @@ class Apps(TapipyCategory):
         for app in matched:
             print(app)
         print()
+        
         return
 
     def undelete(self, app_id) -> None:
