@@ -1,10 +1,8 @@
-<<<<<<< HEAD
 APP_REGISTRY = [
     "core",
     "tapis"
 ]
 
-=======
 """ 
 All settings and configurable variables, such as environment varaibles, go here.
 
@@ -19,8 +17,6 @@ of development for a feature or for testing purposes. For example:
 NOTE: The TACC tenant in production is tacc.tapis.io, not tacc.prod.tapis.io!
 """
 
-# For now only password authentication is available.
->>>>>>> b89279502c6d4be8f651ff7b16bfa7022d4c830c
 AUTH_METHOD = "PASSWORD"
 
 AUTH_METHODS = [ "PASSWORD" ]
