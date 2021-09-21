@@ -74,6 +74,9 @@ class Files(TapipyCategory):
         """
         print("\nUploading files...\n")
         for file in os.listdir(path_to_folder):
+            if os.path.isdir(os.path.join(path_to_folder, file)):
+                self.logger.warn(f"'{file}' is a folder, so its contents will not be uploaded.")
+                continue
             try:
                 self.client.upload(
                     system_id = system_id,
@@ -84,4 +87,6 @@ class Files(TapipyCategory):
             except Exception as e:
                 self.logger.error(f"{e.message}\n")
                 self.exit(1)
+
         self.logger.success(f"Successfully uploaded files to {destination_folder}\n")
+        return
