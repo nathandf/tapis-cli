@@ -1,6 +1,7 @@
 """ Handles TAPIS functionaloty related to jobs. """
 
 from datetime import datetime
+import json
 
 from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
@@ -26,7 +27,7 @@ class Jobs(TapipyCategory):
         try:
             job = self.client.jobs.getJob(jobUuid=uuid)
             self.logger.log(job)
-            print()
+            self.logger.newline(1)
             return
         except InvalidInputError:
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
@@ -37,7 +38,7 @@ class Jobs(TapipyCategory):
         try:
             status = self.client.jobs.getJobHistory(jobUuid=uuid)
             self.logger.log(status)
-            print()
+            self.logger.newline(1)
             return
         except InvalidInputError:
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
@@ -48,7 +49,7 @@ class Jobs(TapipyCategory):
         try:
             status = self.client.jobs.getJobStatus(jobUuid=uuid)
             self.logger.log(status)
-            print()
+            self.logger.newline(1)
             return
         except InvalidInputError:
             self.logger.error(f"Job not found with UUID '{uuid}'\n")
@@ -73,6 +74,22 @@ class Jobs(TapipyCategory):
 
         try:
             job = self.client.jobs.submitJob(name=name, appId=app_id, appVersion=app_version, description=description)
+            self.logger.info(f"Job submitted. UUID: {job.uuid}\n")
+            return
+        except InvalidInputError as e:
+            self.logger.error(f"{e.message}\n")
+            self.exit(1)
+
+    def submit_def(self, job_definition_file, *args) -> None:
+        """ 
+        Submit a job using a custom job JSON definition file. 
+        The job request body can contain more file inputs than are specified
+        in the application, as long as strictFileInputs is set to 'false'.
+        """
+        job_request = json.loads(open(job_definition_file, "r").read())
+
+        try:
+            job = self.client.jobs.submitJob(**job_request)
             self.logger.info(f"Job submitted. UUID: {job.uuid}\n")
             return
         except InvalidInputError as e:

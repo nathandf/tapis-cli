@@ -25,7 +25,7 @@ class Files(TapipyCategory):
         """ Retrieves the contents of the specified file in the target system. """
         try:
             contents = self.client.files.getContents(systemId=system_id, path=path)
-            print()
+            self.logger.newline(1)
             self.logger.complete(f"Fetched contents of file '{path}':\n")
             print(contents, "\n")
             return
@@ -58,7 +58,7 @@ class Files(TapipyCategory):
                 source_file_path = path_to_file,
                 dest_file_path = destination_folder
             )
-            print()
+            self.logger.newline(1)
             self.logger.complete(f"Uploaded file '{path_to_file}' to {destination_folder}\n")
             return
         except Exception as e:
