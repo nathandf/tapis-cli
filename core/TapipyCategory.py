@@ -10,7 +10,7 @@ from tapipy.tapis import Tapis
 
 
 class TapipyCategory(Category):
-    """ A TAPIS-specific category parser. """
+    """ A TAPIS-specific category. """
     client: Union[Tapis, None] = None
 
     def __init__(self):
