@@ -31,7 +31,7 @@ DEFAULT_AUTH_METHOD = PASSWORD
 # See docstring for info on the below.
 ENVS = [ "develop", "staging", "prod" ]
 
-ENV = "develop"
+ENV = "prod"
 TENANT = "tacc"
 
 ENV = ENV + "." if (ENV != "prod") else ""
