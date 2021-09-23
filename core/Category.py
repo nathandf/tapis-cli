@@ -8,6 +8,7 @@ import re
 import sys
 import types
 
+from typing import Dict
 from utils.Logger import Logger
 
 
@@ -18,6 +19,7 @@ class Category:
     should inherit from this category. See 'TapipyCategory.py' for an example.
     """
     options = []
+    keyword_args: Dict[str, str] = {}
     command = "help"
     logger = None
     exit = sys.exit
@@ -58,6 +60,10 @@ class Category:
         """ Any options for the command are logged to the class. """
         self.options = options
 
+        return
+
+    def set_keyword_args(self, keyword_args: Dict[str, str]) -> None:
+        self.keyword_args = keyword_args
         return
 
     def execute(self, args) -> None:
