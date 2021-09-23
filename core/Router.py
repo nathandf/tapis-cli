@@ -1,5 +1,6 @@
 """ Handles the resolving (parsing) of commands and their options. """
 
+from os import CLD_CONTINUED
 import re
 
 from core.Category import Category
@@ -28,10 +29,16 @@ class Router:
             category_name,
             command_name,
             options,
+            arg_options,
             keyword_args,
             positional_args
         ) = self.parse_args(args)
-
+        
+        self.logger.debug(f"options: {options}")
+        self.logger.debug(f"arg options: {arg_options}")
+        self.logger.debug(f"keyword args: {keyword_args}")
+        self.logger.debug(f"position args: {positional_args}")
+        
         # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args.
         if find_spec(f"categories.{category_name.capitalize()}") is not None:
@@ -47,6 +54,7 @@ class Router:
                 category.set_resource(category_name)
                 category.set_operation(command_name)
                 category.set_options(options)
+                category.set_arg_options(arg_options)
                 category.set_keyword_args(keyword_args)
 
                 return (category, positional_args)
@@ -54,6 +62,7 @@ class Router:
             # Set the options and command
             category.set_command(command_name)
             category.set_options(options)
+            category.set_arg_options(arg_options)
             category.set_keyword_args(keyword_args)
 
             # Return the category with command and options set.
@@ -67,6 +76,7 @@ class Router:
         category.set_resource(category_name)
         category.set_operation(command_name)
         category.set_options(options)
+        category.set_arg_options(arg_options)
         category.set_keyword_args(keyword_args)
 
         return (category, positional_args)
@@ -91,21 +101,26 @@ class Router:
 
     def parse_keyword_args(self, args: List[str]) -> Dict[str, str]:
         # Regex pattern for keyword args and their values
-        # NOTE This is a weak pattern. Doesn't allow for "=" in 
-        # the value of the keword argument AND double quotes
-        # must be escaped on the command line.
-        # matches: --someKeywordArg="someVlaue"
-        # pattern = re.compile(r"[\s]{1}[-]{2}([\w]{1}[\w]*)[\s]*=[\s]*\"([\w\s\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~]*)\"", re.MULTILINE | re.UNICODE)
-        
-        # This pattern is like the above but a little more flexible. Doesn't require
-        # equal sign or quotes surrounding the value
         pattern = re.compile(r"(?<=[\s]){1}[-]{2}([\w]{1}[\w]*)[\s]+([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)(?=[\s])*", re.MULTILINE | re.UNICODE)
-        return (dict(pattern.findall(" " + " ".join(args))))
+        return dict(pattern.findall(" " + " ".join(args)))
 
-    def parse_args(self, args: List[str]) -> Tuple[str, str, List, Dict, List]:
+    def parse_arg_options(self, args: List[str]) -> Dict:
+        # Regex pattern for arg options and their values
+        pattern = re.compile(r"(?<=[\s]){1}[-]{1}([\w]{1}[\w]*)[\s]+([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)(?=[\s])*", re.MULTILINE | re.UNICODE)
+        return dict(pattern.findall(" " + " ".join(args)))
+
+    def parse_args(self,
+        args: List[str]) -> Tuple[
+            str,
+            str,
+            List[str],
+            Dict[str, str],
+            Dict[str, str],
+            List[str]
+        ]:
         # Category name
         category_name: str = args[0]
-        # Parse the options from the args. This also keeps determines the
+        # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
         options = self.parse_options(args[1:])
         # Set the command on the category.
@@ -114,6 +129,7 @@ class Router:
         # for the category.
         command_args = args[self.command_index+1:]
         keyword_args = self.parse_keyword_args(command_args)
+        arg_options = self.parse_arg_options(command_args)
 
         # Remove all options and keyword args from the args list. Only
         # positional arguments will remain
@@ -135,6 +151,7 @@ class Router:
             category_name,
             command_name,
             options,
+            arg_options,
             keyword_args,
             positional_args
         )

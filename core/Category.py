@@ -20,6 +20,7 @@ class Category:
     """
     options = []
     keyword_args: Dict[str, str] = {}
+    arg_options: Dict[str, str] = {}
     command = "help"
     logger = None
     exit = sys.exit
@@ -66,6 +67,10 @@ class Category:
 
     def set_keyword_args(self, keyword_args: Dict[str, str]) -> None:
         self.keyword_args = keyword_args
+        return
+
+    def set_arg_options(self, arg_options: Dict[str, str]) -> None:
+        self.arg_options = arg_options
         return
 
     def execute(self, args) -> None:
