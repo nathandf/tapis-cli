@@ -13,18 +13,25 @@ class OpenApiCategory(TapipyCategory):
         TapipyCategory.__init__(self)
 
     def execute(self, args) -> None:
-        if len(args) == 0 and len(self.keyword_args) == 0:
-            result = self.operation()
-        elif len(args) > 0 and len(self.keyword_args) == 0:
-            result = self.operation(*args)
-        elif len(args) == 0 and len(self.keyword_args) > 0:
-            result = self.operation(**self.keyword_args)
-        else:
-            result = self.operation(*args, **self.keyword_args)
+        try:
+            if len(args) == 0 and len(self.keyword_args) == 0:
+                result = self.operation()
+            elif len(args) > 0 and len(self.keyword_args) == 0:
+                result = self.operation(*args)
+            elif len(args) == 0 and len(self.keyword_args) > 0:
+                result = self.operation(**self.keyword_args)
+            else:
+                result = self.operation(*args, **self.keyword_args)
 
+            if type(result) == enumerate:
+                for item in result:
+                    self.logger.log(item)
+                return
 
-        self.logger.log(result)
-        return
+            self.logger.log(result)
+            return
+        except Exception as e:
+            self.logger.error(e)
 
     def set_operation(self, operation_name: str) -> None:
         try:

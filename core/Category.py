@@ -30,9 +30,11 @@ class Category:
     def help(self, **args):
         """
         \nGeneral usage:
-        $tapis [category] [command] [args]
+        '*' indicates optional
+        $tapis [category] [options] [command] [args/keyword args]
         \nExamples:
         - tapis systems get [systemId]
+        - tapis systems getSystem --systemId [systemId]
         - tapis files upload [systems] [path/to/local/file] [destination/folder]
         - tapis systems update [path/to/definition/file]
         - tapis apps create [path/to/definition/file]
