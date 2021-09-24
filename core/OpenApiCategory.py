@@ -59,6 +59,7 @@ class OpenApiCategory(TapipyCategory):
             self.exit(1)
 
     def validate_keyword_args(self):
+        """Validates the keywords required by an OpenAPI command."""
         required_params = []
         for param in self.operation.path_parameters:
             if param.required:
