@@ -1,4 +1,4 @@
-""" Handles TAPIS functionality related to systems. """
+"""Handles TAPIS functionality related to systems."""
 
 import json
 
@@ -7,12 +7,12 @@ from tapipy.errors import InvalidInputError
 
 
 class Systems(TapipyCategory):
-    """ Contains all of the CRUD functions associated with systems. """
+    """Contains all of the CRUD functions associated with systems."""
     def __init__(self):
         TapipyCategory.__init__(self)
 
     def available(self, system_id) -> None:
-        """ Check if a system is currently enabled. """
+        """Check if a system is currently enabled."""
         try:
             system = self.client.systems.isEnabled(systemId=system_id)
             status = "enabled" if system.aBool else "disabled" 
@@ -32,7 +32,7 @@ class Systems(TapipyCategory):
         return
 
     def create(self, system_definition_file: str) -> None:
-        """ Create a new system from a system definition JSON file. """
+        """Create a new system from a system definition JSON file."""
         definition = json.loads(open(system_definition_file, "r").read())
         self.client.systems.createSystem(**definition)
         self.logger.success(f"System \'{definition['id']}\' created\n")
@@ -64,7 +64,7 @@ class Systems(TapipyCategory):
             return
 
     def disable(self, system_id) -> None:
-        """ Mark (all versions of) a system as unavailable for use. """
+        """Mark (all versions of) a system as unavailable for use."""
         try:
             self.client.systems.disableSystem(systemId=system_id)
             self.logger.success(f"The system '{system_id}' was disabled\n")
@@ -74,7 +74,7 @@ class Systems(TapipyCategory):
             return       
 
     def enable(self, system_id) -> None:
-        """ Mark (all versions of) a system as available for use. """
+        """Mark (all versions of) a system as available for use."""
         try:
             self.client.systems.enableSystem(systemId=system_id)
             self.logger.success(f"The system '{system_id}' was enabled\n")
@@ -84,7 +84,7 @@ class Systems(TapipyCategory):
             return   
 
     def get(self, system_id) -> None:
-        """ Retrieve the details of an system's latest version. """
+        """Retrieve the details of an system's latest version."""
         try:
             system = self.client.systems.getSystem(systemId=system_id)
             self.logger.log(system)
@@ -95,14 +95,14 @@ class Systems(TapipyCategory):
             return
 
     def getcreds(self) -> None:
-        """ Get a specified user's credentials. """
+        """Get a specified user's credentials."""
         # TODO
         self.logger.warn("get_credentials not implemented\n")
 
         return
  
     def getperms(self, system_id, username) -> None:
-        """ Get the permissions that a specified user has on a target system. """
+        """Get the permissions that a specified user has on a target system."""
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
         self.logger.log(creds)
         print()
@@ -110,7 +110,7 @@ class Systems(TapipyCategory):
         return
 
     def grantperms(self, system_id, username, *args) -> None:
-        """ Give permissions to a specified user on a target application. """
+        """Give permissions to a specified user on a target application."""
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject.
@@ -121,7 +121,7 @@ class Systems(TapipyCategory):
         return
 
     def list(self) -> None:
-        """ List every system in this tenant and environment. """
+        """List every system in this tenant and environment."""
         systems = self.client.systems.getSystems()
         if len(systems) > 0:
             print()
@@ -166,7 +166,7 @@ class Systems(TapipyCategory):
             self.exit(1)
 
     def revokeperms(self, system_id, username, *args) -> None:
-        """ Revoke permissions from a specified user on a target system. """
+        """Revoke permissions from a specified user on a target system."""
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject.
@@ -189,7 +189,7 @@ class Systems(TapipyCategory):
         return
 
     def undelete(self, system_id) -> None:
-        """ Undelete an applications that has been "soft" deleted. """
+        """Undelete an applications that has been "soft" deleted."""
         try:
             self.client.systems.undeleteSystem(systemId=system_id)
             self.logger.success(f"Recovered system with id '{system_id}'\n")
@@ -199,7 +199,7 @@ class Systems(TapipyCategory):
             return
 
     def update_creds(self, file) -> None:
-        """ Update user credentials using a JSON definition file containing credentials. """
+        """Update user credentials using a JSON definition file containing credentials."""
         creds = json.loads(open(file, "r").read())
         self.client.systems.createUserCredential(**creds)
 

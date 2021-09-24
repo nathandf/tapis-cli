@@ -1,4 +1,4 @@
-""" Handles the resolving (parsing) of commands and their options. """
+"""Handles the resolving (parsing) of commands and their options."""
 
 import re
 
@@ -21,7 +21,7 @@ class Router:
         self.logger = Logger()
 
     def resolve(self, args: List[str]) -> Tuple[Category, List[str]]:
-        """ The command is resolved here. """
+        """The command is resolved here."""
 
         # Parse the arguments and extract the values
         (
@@ -73,7 +73,7 @@ class Router:
         
         
     def parse_options(self, args: List[str]) -> List[str]:
-        """Extract options from the args"""
+        """Extract options from the arguments."""
         # Regex pattern for options.
         pattern = re.compile(r"^[-]{1}[a-z]+[a-z_]*$")
         # First arg in the args list is the category.
@@ -90,6 +90,7 @@ class Router:
         return options
 
     def parse_keyword_args(self, args: List[str]) -> Dict[str, str]:
+        """Parse keywords passed in as arguments."""
         # Regex pattern for keyword args and their values
         # NOTE This is a weak pattern. Doesn't allow for "=" in 
         # the value of the keword argument AND double quotes
@@ -103,6 +104,7 @@ class Router:
         return (dict(pattern.findall(" " + " ".join(args))))
 
     def parse_args(self, args: List[str]) -> Tuple[str, str, List, Dict, List]:
+        """Parse non-keyword arguments."""
         # Category name
         category_name: str = args[0]
         # Parse the options from the args. This also keeps determines the
