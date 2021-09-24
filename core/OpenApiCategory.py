@@ -1,11 +1,15 @@
+"""
+Handles the parsing and execution of commands specified in the OpenAPI specs.
+
+Different tools, such as Tapipy, may inherit from this to specify their own
+specific categories and commands.
+"""
+
 from core.TapipyCategory import TapipyCategory
 
 # TODO Use client initialization logic from Tapipy in OpenApiCategory
 class OpenApiCategory(TapipyCategory):
-    """
-    Overwrites the execute method to access the
-    Tapipy client directly
-    """
+    """Overwrites the execute method to access the Tapipy client directly."""
     operation = None
     resource = None
 
@@ -13,6 +17,7 @@ class OpenApiCategory(TapipyCategory):
         TapipyCategory.__init__(self)
 
     def execute(self, args) -> None:
+        """Executes the OpenAPI command."""
         try:
             self.validate_keyword_args()
 
@@ -36,6 +41,7 @@ class OpenApiCategory(TapipyCategory):
             self.logger.error(e)
 
     def set_operation(self, operation_name: str) -> None:
+        """Sets the operation to be performed upon execution."""
         try:
             self.operation = getattr(self.resource, operation_name)
             return
@@ -44,6 +50,7 @@ class OpenApiCategory(TapipyCategory):
             self.exit(1)
 
     def set_resource(self, resource_name: str) -> None:
+        """Gets the resource name for the OpenAPI command."""
         try:
             self.resource = getattr(self.client, resource_name)
             return
@@ -52,6 +59,7 @@ class OpenApiCategory(TapipyCategory):
             self.exit(1)
 
     def validate_keyword_args(self):
+        """Validates the keywords required by an OpenAPI command."""
         required_params = []
         for param in self.operation.path_parameters:
             if param.required:

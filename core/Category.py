@@ -59,7 +59,7 @@ class Category:
         return
     
     def set_options(self, options: list) -> None:
-        """ Any options for the command are logged to the class. """
+        """Any options for the command are logged to the class."""
         self.options = options
 
         return
@@ -69,14 +69,14 @@ class Category:
         return
 
     def execute(self, args) -> None:
-        """ The command is executed (along with its options). """
+        """The command is executed (along with its options)."""
         method = getattr(self, self.command)
         method(*args)
 
         return
 
     def get_methods(self, instance: object) -> list:
-        """ Returns all of the methods that are available for the specified category. """
+        """Returns all of the methods that are available for the specified category."""
         # Get all props of of the instance.
         class_props = dir(instance)
 

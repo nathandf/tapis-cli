@@ -1,4 +1,4 @@
-""" Handles TAPIS functionality related to applications. """
+"""Handles TAPIS functionality related to applications."""
 
 import json
 import sys
@@ -8,7 +8,7 @@ from tapipy.errors import InvalidInputError, ServerDownError
 
 
 class Apps(TapipyCategory):
-    """ Contains all of the CRUD functions associated with applications. """
+    """Contains all of the CRUD functions associated with applications."""
     def __init__(self):
         TapipyCategory.__init__(self)
 
@@ -34,7 +34,7 @@ class Apps(TapipyCategory):
         return
 
     def create(self, app_definition_file) -> None:
-        """ Create a new application from an app definition JSON file. """
+        """Create a new application from an app definition JSON file."""
         try:
             definition = json.loads(open(app_definition_file, "r").read())
             self.client.apps.createAppVersion(**definition)
@@ -58,7 +58,7 @@ class Apps(TapipyCategory):
             return
 
     def disable(self, app_id) -> None:
-        """ Mark (all versions of) an application as unavailable for use. """
+        """Mark (all versions of) an application as unavailable for use."""
         try:
             self.client.apps.disableApp(appId=app_id)
             self.logger.success(f"The app '{app_id}' was disabled\n")
@@ -67,7 +67,7 @@ class Apps(TapipyCategory):
             self.logger.error(f"App not found with id '{app_id}'\n")          
 
     def enable(self, app_id) -> None:
-        """ Mark (all versions of) an application as available for use. """
+        """Mark (all versions of) an application as available for use."""
         try:
             self.client.apps.enableApp(appId=app_id)
             self.logger.success(f"The app '{app_id}' was enabled\n")
@@ -76,7 +76,7 @@ class Apps(TapipyCategory):
             self.logger.error(f"App not found with id '{app_id}'\n") 
 
     def get(self, app_id) -> None:
-        """ Retrieve the details of an application's latest version. """
+        """Retrieve the details of an application's latest version."""
         try:
             app = self.client.apps.getAppLatestVersion(appId=app_id)
             self.logger.log(app)
@@ -91,7 +91,7 @@ class Apps(TapipyCategory):
             self.exit(1)
 
     def getversion(self, app_id, version) -> None:
-        """ Retrieve the details of the specified version of an application. """
+        """Retrieve the details of the specified version of an application."""
         try:
             app = self.client.apps.getApp(appId=app_id, appVersion=version)
             self.logger.log(app)
@@ -106,7 +106,7 @@ class Apps(TapipyCategory):
             self.exit(1)
 
     def getperms(self, app_id, username) -> None:
-        """ Get the permissions that a specified user has on a target application. """
+        """Get the permissions that a specified user has on a target application."""
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
         print()
@@ -114,7 +114,7 @@ class Apps(TapipyCategory):
         return
 
     def grantperms(self, app_id, username, *args) -> None:
-        """ Give permissions to a specified user on a target application. """
+        """Give permissions to a specified user on a target application."""
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject.
@@ -124,7 +124,7 @@ class Apps(TapipyCategory):
         return
 
     def list(self) -> None:
-        """ List every application on the systems in this tenant and environment. """
+        """List every application on the systems in this tenant and environment."""
         apps = self.client.apps.getApps()
         if len(apps) > 0:
             print()
@@ -177,7 +177,7 @@ class Apps(TapipyCategory):
             self.exit(1)
 
     def revokeperms(self, app_id, username, *args) -> None:
-        """ Revoke permissions from a specified user on a target application. """
+        """Revoke permissions from a specified user on a target application."""
         perms = [arg.upper() for arg in args]
 
         # The expected input should be a JSONArray, NOT a JSONObject
@@ -200,7 +200,7 @@ class Apps(TapipyCategory):
         return
 
     def undelete(self, app_id) -> None:
-        """ Undelete an applications that has been "soft" deleted. """
+        """Undelete an applications that has been "soft" deleted."""
         try:
             self.client.apps.undeleteApp(appId=app_id)
             self.logger.success(f"Recovered app with id '{app_id}'\n")

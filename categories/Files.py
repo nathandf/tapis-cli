@@ -1,4 +1,4 @@
-""" Handles TAPIS functionality related to files. """
+"""Handles TAPIS functionality related to files."""
 
 import os
 
@@ -7,12 +7,12 @@ from tapipy.errors import InvalidInputError
 
 
 class Files(TapipyCategory):
-    """ Contains all of the CRUD functions associated with files. """
+    """Contains all of the CRUD functions associated with files."""
     def __init__(self):
         TapipyCategory.__init__(self)
         
     def delete(self, system_id, path) -> None:
-        """ Deletes the specified file from the target system. """
+        """Deletes the specified file from the target system."""
         try:
             self.client.files.delete(systemId=system_id, path=path)
             self.logger.info(f"Deleted file '{path}' in system '{system_id}'\n")
@@ -22,7 +22,7 @@ class Files(TapipyCategory):
             return
 
     def get_contents(self, system_id, path) -> None:
-        """ Retrieves the contents of the specified file in the target system. """
+        """Retrieves the contents of the specified file in the target system."""
         try:
             contents = self.client.files.getContents(systemId=system_id, path=path)
             print()
@@ -34,7 +34,7 @@ class Files(TapipyCategory):
             return
         
     def list(self, system_id, path) -> None:
-        """ List every file on the target system. """
+        """List every file on the target system."""
         # BUG Seems to be breaking a LOT... very rarely works.
         files = self.client.files.listFiles(systemId=system_id, path=path)
         for file in files:

@@ -1,4 +1,4 @@
-""" Handles the checking and authentication of user credentials. """
+"""Handles the checking and authentication of user credentials."""
 
 import sys
 from typing import Union
@@ -10,7 +10,7 @@ from utils.Logger import Logger
 
 
 class Authenticator:
-    """ Authorization credentials are parsed here. """
+    """Authorization credentials are parsed here."""
     base_url = ""
     auth_methods = settings.AUTH_METHODS
 
@@ -51,7 +51,7 @@ class Authenticator:
             raise ValueError(f"Invalid auth_method: {auth_method}. Valid auth_method: {settings.AUTH_METHODS}\n")
 
     def validate_credentials(self, auth_method: str, credentials: dict) -> None:
-        """ Checks to see if the user's credentials exist already. """
+        """Checks to see if the user's credentials exist already."""
         if auth_method == "PASSWORD":
             if not self.keys_in_dict(["username", "password"], credentials):
                 raise ValueError("Provided credentials must contain a 'username' and 'password'\n")
@@ -59,7 +59,7 @@ class Authenticator:
         return
 
     def keys_in_dict(self, keys: list, dict: dict) -> bool:
-        """ Iterates through the dictionary of known keys to find user credentials. """
+        """Iterates through the dictionary of known keys to find user credentials."""
         for key in keys:
             if key not in dict:
                 return False
