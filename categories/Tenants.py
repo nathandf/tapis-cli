@@ -1,16 +1,16 @@
-""" Handles TAPIS functionality related to tenants. """
+"""Handles TAPIS functionality related to tenants."""
 
 from core.TapipyCategory import TapipyCategory
 from tapipy.errors import InvalidInputError
 
 
 class Tenants(TapipyCategory):
-    """ Contains all CRUD functions associated with tenants. """
+    """Contains all CRUD functions associated with tenants."""
     def __init__(self):
         TapipyCategory.__init__(self)
 
     def get(self, tenant_id) -> None:
-        """ Retrieve the details of a specified tenant. """
+        """Retrieve the details of a specified tenant."""
         try:
             tenant = self.client.tenants.get_tenant(tenantId=tenant_id)
             self.logger.log(tenant)
@@ -21,7 +21,7 @@ class Tenants(TapipyCategory):
             return
 
     def list(self) -> None:
-        """ List every tenant on the site. """
+        """List every tenant on the site."""
         tenants = self.client.tenants.list_tenants()
         if len(tenants) > 0:
             print()

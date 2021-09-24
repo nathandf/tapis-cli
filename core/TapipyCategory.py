@@ -1,4 +1,4 @@
-""" Handles the functionality of TAPIS commands specifically. """
+"""Handles the functionality of TAPIS commands specifically."""
 
 import re
 from typing import Union
@@ -10,7 +10,7 @@ from tapipy.tapis import Tapis
 
 
 class TapipyCategory(Category):
-    """ A TAPIS-specific category. """
+    """A TAPIS-specific category."""
     client: Union[Tapis, None] = None
 
     def __init__(self):
@@ -25,7 +25,7 @@ class TapipyCategory(Category):
             raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
 
     def methods(self) -> None:
-        """ Returns all of the methods associated with a particular category. """
+        """Returns all of the methods associated with a particular category."""
         all_methods = dir(getattr(self.client, type(self).__name__.lower()))
         methods = []
 

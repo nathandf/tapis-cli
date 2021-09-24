@@ -1,4 +1,4 @@
-""" Handles the resolving (parsing) of commands and their options. """
+"""Handles the resolving (parsing) of commands and their options."""
 
 from os import CLD_CONTINUED
 import re
@@ -26,7 +26,7 @@ class Router:
         self.logger = Logger()
 
     def resolve(self, args: List[str]) -> Tuple[Category, List[str]]:
-        """ The command is resolved here. """
+        """The command is resolved here."""
 
         # Parse the arguments and extract the values
         (
@@ -82,7 +82,7 @@ class Router:
         
         
     def parse_options(self, args: List[str]) -> List[str]:
-        """Extract options from the args"""
+        """Extract options from the arguments."""
         # Regex pattern for options.
         pattern = re.compile(rf"{self.option_pattern}")
         # First arg in the args list is the category.
@@ -99,6 +99,7 @@ class Router:
         return options
 
     def parse_keyword_args(self, args: List[str]) -> Dict[str, str]:
+        """Parse keywords passed in as arguments."""
         # Regex pattern for keyword args and their values
         pattern = re.compile(rf"(?<=[\s]){self.keyword_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
         return dict(pattern.findall(" " + " ".join(args)))

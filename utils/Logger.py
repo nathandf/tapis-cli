@@ -1,7 +1,7 @@
-""" Handles the error/success/info logging and sets their printed styles. """
+"""Handles the error/success/info logging and sets their printed styles."""
 
 class styles:
-    """ The colors associated with the logging messages. """
+    """The colors associated with the logging messages."""
     DEBUG = '\033[95m'
     BLUE = '\033[94m'
     SUCCESS = '\033[92m'
@@ -13,7 +13,7 @@ class styles:
     UNDERLINE = '\033[4m'
 
 class Logger:
-    """ Contains the various log categories and their printed messages. """
+    """Contains the various log categories and their printed messages."""
     def complete(self, message):
         # Typically used for signifying that a task is done.
         print(f"{styles.SUCCESS}{styles.BOLD}✓{styles.RESET} {message}")
