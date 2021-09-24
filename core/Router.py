@@ -17,6 +17,10 @@ class Router:
     """
     command_index: int = 1
     logger: Logger = None
+    tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
+    arg_option_tag_pattern = r"[-]{1}([\w]{1}[\w]*)"
+    keyword_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
+    option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
 
     def __init__(self):
         self.logger = Logger()
@@ -33,11 +37,6 @@ class Router:
             keyword_args,
             positional_args
         ) = self.parse_args(args)
-        
-        self.logger.debug(f"options: {options}")
-        self.logger.debug(f"arg options: {arg_options}")
-        self.logger.debug(f"keyword args: {keyword_args}")
-        self.logger.debug(f"position args: {positional_args}")
         
         # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args.
@@ -85,7 +84,7 @@ class Router:
     def parse_options(self, args: List[str]) -> List[str]:
         """Extract options from the args"""
         # Regex pattern for options.
-        pattern = re.compile(r"^[-]{1}[a-z]+[a-z_]*$")
+        pattern = re.compile(rf"{self.option_pattern}")
         # First arg in the args list is the category.
         # For every option found in the args list, increment the command_index
         # by 1. If none are found, then the command name is at index 1.
@@ -101,12 +100,12 @@ class Router:
 
     def parse_keyword_args(self, args: List[str]) -> Dict[str, str]:
         # Regex pattern for keyword args and their values
-        pattern = re.compile(r"(?<=[\s]){1}[-]{2}([\w]{1}[\w]*)[\s]+([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)(?=[\s])*", re.MULTILINE | re.UNICODE)
+        pattern = re.compile(rf"(?<=[\s]){self.keyword_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
         return dict(pattern.findall(" " + " ".join(args)))
 
     def parse_arg_options(self, args: List[str]) -> Dict:
         # Regex pattern for arg options and their values
-        pattern = re.compile(r"(?<=[\s]){1}[-]{1}([\w]{1}[\w]*)[\s]+([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)(?=[\s])*", re.MULTILINE | re.UNICODE)
+        pattern = re.compile(rf"(?<=[\s]){self.arg_option_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
         return dict(pattern.findall(" " + " ".join(args)))
 
     def parse_args(self,
@@ -134,17 +133,24 @@ class Router:
         # Remove all options and keyword args from the args list. Only
         # positional arguments will remain
         positional_args = []
-        keyword_indicies = []
+        keyword_arg_indicies = []
+        arg_option_indicies = []
 
+        # Isolate positions arguments from the command args
         for index, item in enumerate(command_args):
-            if re.match(r"[-]{2}([\w]{1}[\w]*)", item) is not None and index not in keyword_indicies:
+            if re.match(rf"{self.keyword_arg_tag_pattern}", item) is not None and index not in keyword_arg_indicies:
                 # Append the index of key
-                keyword_indicies.append(index)
+                keyword_arg_indicies.append(index)
                 # Append the index of the value
-                keyword_indicies.append(index+1)
+                keyword_arg_indicies.append(index+1)
+            if re.match(rf"{self.arg_option_tag_pattern}", item) is not None and index not in arg_option_indicies:
+                # Append the index of key
+                arg_option_indicies.append(index)
+                # Append the index of the value
+                arg_option_indicies.append(index+1)
         
         for index, item in enumerate(command_args):
-            if index not in keyword_indicies:
+            if index not in keyword_arg_indicies and index not in arg_option_indicies:
                 positional_args.append(item)
 
         return (
