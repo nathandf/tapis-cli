@@ -32,11 +32,6 @@ class Router:
             positional_args
         ) = self.parse_args(args)
 
-        self.logger.debug(f"All args: {args}")
-        self.logger.debug(f"Options: {options}")
-        self.logger.debug(f"kwargs: {keyword_args}")
-        self.logger.debug(f"Positional args: {positional_args}")
-
         # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args.
         if find_spec(f"categories.{category_name.capitalize()}") is not None:

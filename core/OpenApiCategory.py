@@ -14,6 +14,8 @@ class OpenApiCategory(TapipyCategory):
 
     def execute(self, args) -> None:
         try:
+            self.validate_keyword_args()
+
             if len(args) == 0 and len(self.keyword_args) == 0:
                 result = self.operation()
             elif len(args) > 0 and len(self.keyword_args) == 0:
@@ -48,3 +50,14 @@ class OpenApiCategory(TapipyCategory):
         except:
             self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
             self.exit(1)
+
+    def validate_keyword_args(self):
+        required_params = []
+        for param in self.operation.path_parameters:
+            if param.required:
+                required_params.append(param.name)
+
+        keyword_arg_keys = self.keyword_args.keys()
+        for param in required_params:
+            if param not in keyword_arg_keys:
+                raise Exception(f"'{param}' is a required keyword argument. Required keyword arguments: {required_params}")
