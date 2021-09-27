@@ -16,11 +16,12 @@ class Apps(TapipyCategory):
         """ Check if an application is currently enabled. """
         try:
             app = self.client.apps.isEnabled(appId=app_id)
-            status = "enabled" if app.aBool else "disabled" 
+            status = "enabled" if app.aBool else "disabled"
             self.logger.info(f"The app '{app_id}' is {status}\n")
             return
         except InvalidInputError:
             self.logger.error(f"App not found with id '{app_id}'\n")
+            return
 
     def change_owner(self, app_id, username) -> None:
         """
@@ -42,11 +43,12 @@ class Apps(TapipyCategory):
             return
         except (ServerDownError, InvalidInputError) as e:
             self.logger.error(e)
-            print()         
+            self.logger.newline(1)
+            return
 
     def delete(self, app_id) -> None:
         """
-        "Soft" delete an application; it will not appear in queries. 
+        "Soft" delete an application; it will not appear in queries.
         Apps are still present in the environment and may be undeleted.
         """
         try:
@@ -64,7 +66,8 @@ class Apps(TapipyCategory):
             self.logger.success(f"The app '{app_id}' was disabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"App not found with id '{app_id}'\n")          
+            self.logger.error(f"App not found with id '{app_id}'\n")
+            return
 
     def enable(self, app_id) -> None:
         """Mark (all versions of) an application as available for use."""
@@ -73,14 +76,15 @@ class Apps(TapipyCategory):
             self.logger.success(f"The app '{app_id}' was enabled\n")
             return
         except InvalidInputError:
-            self.logger.error(f"App not found with id '{app_id}'\n") 
+            self.logger.error(f"App not found with id '{app_id}'\n")
+            return
 
     def get(self, app_id) -> None:
         """Retrieve the details of an application's latest version."""
         try:
             app = self.client.apps.getAppLatestVersion(appId=app_id)
             self.logger.log(app)
-            print()
+            self.logger.newline(1)
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}\n")
@@ -95,7 +99,7 @@ class Apps(TapipyCategory):
         try:
             app = self.client.apps.getApp(appId=app_id, appVersion=version)
             self.logger.log(app)
-            print()
+            self.logger.newline(1)
             return
         except InvalidInputError as e:
             self.logger.error(f"{e.message}\n")
@@ -109,7 +113,7 @@ class Apps(TapipyCategory):
         """Get the permissions that a specified user has on a target application."""
         creds = self.client.apps.getUserPerms(appId=app_id, userName=username)
         self.logger.log(creds)
-        print()
+        self.logger.newline(1)
 
         return
 
@@ -127,21 +131,26 @@ class Apps(TapipyCategory):
         """List every application on the systems in this tenant and environment."""
         apps = self.client.apps.getApps()
         if len(apps) > 0:
-            print()
+            self.logger.newline(1)
             for app in apps:
                 self.logger.log(app.id)
-            print()
+            self.logger.newline(1)
             return
-        self.logger.log(f"No apps found for user '{self.client.username}'\n")
 
+        self.logger.log(f"No apps found for user '{self.client.username}'\n")
         return
 
     def patch(self, app_definition_file) -> None:
         """
         Update selected attributes of an application using an app definition
-        JSON file containing only the required and specified attributes. 
+        JSON file containing only the required and specified attributes.
         """
         app_definition = json.loads(open(app_definition_file, "r").read())
+
+        if 'appId' not in app_definition.keys():
+            app_definition['appId'] = app_definition['id']
+        if 'appVersion' not in app_definition.keys():
+            app_definition['appVersion'] = app_definition['version']
 
         try:
             # Update select attributes defined by the system definition file.
@@ -163,6 +172,11 @@ class Apps(TapipyCategory):
         """
         app_definition = json.loads(open(app_definition_file, "r").read())
 
+        if 'appId' not in app_definition.keys():
+            app_definition['appId'] = app_definition['id']
+        if 'appVersion' not in app_definition.keys():
+            app_definition['appVersion'] = app_definition['version']
+
         try:
             # Update select attributes defined by the system definition file.
             self.client.apps.putApp(**app_definition)
@@ -180,7 +194,7 @@ class Apps(TapipyCategory):
         """Revoke permissions from a specified user on a target application."""
         perms = [arg.upper() for arg in args]
 
-        # The expected input should be a JSONArray, NOT a JSONObject
+        # The expected input should be a JSONArray, NOT a JSONObject.
         self.client.apps.revokeUserPerms(appId=app_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {perms} revoked from user '{username}'\n")
 
@@ -195,8 +209,8 @@ class Apps(TapipyCategory):
         matched = self.client.apps.searchAppsRequestBody(search=args)
         for app in matched:
             print(app)
-        print()
-        
+        self.logger.newline(1)
+
         return
 
     def undelete(self, app_id) -> None:

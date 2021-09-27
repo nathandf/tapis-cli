@@ -105,7 +105,7 @@ class Systems(TapipyCategory):
         """Get the permissions that a specified user has on a target system."""
         creds = self.client.systems.getUserPerms(systemId=system_id, userName=username)
         self.logger.log(creds)
-        print()
+        self.logger.newline(1)
 
         return
 
@@ -116,7 +116,7 @@ class Systems(TapipyCategory):
         # The expected input should be a JSONArray, NOT a JSONObject.
         self.client.systems.grantUserPerms(systemId=system_id, userName=username, permissions=perms)
         self.logger.info(f"Permissions {args} granted to user '{username}'\n")
-        print()
+        self.logger.newline(1)
 
         return
 
@@ -124,10 +124,10 @@ class Systems(TapipyCategory):
         """List every system in this tenant and environment."""
         systems = self.client.systems.getSystems()
         if len(systems) > 0:
-            print()
+            self.logger.newline(1)
             for system in systems:
                 self.logger.log(system.id)
-            print()
+            self.logger.newline(1)
             return
         self.logger.log(f"No systems found for user '{self.client.username}'\n")
 
@@ -139,6 +139,11 @@ class Systems(TapipyCategory):
         JSON file containing only the required and specified attributes. 
         """
         system_definition = json.loads(open(system_definition_file, "r").read())
+
+        if 'systemId' not in system_definition.keys():
+            system_definition['systemId'] = system_definition['id']
+        if 'systemVersion' not in system_definition.keys():
+            system_definition['systemVersion'] = system_definition['version']
 
         try:
             # Update select attributes defined by the system definition file.
@@ -155,6 +160,11 @@ class Systems(TapipyCategory):
         file that contains all the same attributes used to create the system.
         """
         system_definition = json.loads(open(system_definition_file, "r").read())
+
+        if 'systemId' not in system_definition.keys():
+            system_definition['systemId'] = system_definition['id']
+        if 'systemVersion' not in system_definition.keys():
+            system_definition['systemVersion'] = system_definition['version']
 
         try:
             # Update select attributes defined by the system definition file.
@@ -184,7 +194,7 @@ class Systems(TapipyCategory):
         matched = self.client.systems.searchSystemsRequestBody(search=args)
         for system in matched:
             print(system)
-        print()
+        self.logger.newline(1)
 
         return
 
