@@ -14,7 +14,7 @@ class Tenants(TapipyCategory):
         try:
             tenant = self.client.tenants.get_tenant(tenantId=tenant_id)
             self.logger.log(tenant)
-            print()
+            self.logger.newline(1)
             return
         except InvalidInputError:
             self.logger.error(f"Tenant not found with id '{tenant_id}'\n")
@@ -24,10 +24,10 @@ class Tenants(TapipyCategory):
         """List every tenant on the site."""
         tenants = self.client.tenants.list_tenants()
         if len(tenants) > 0:
-            print()
+            self.logger.newline(1)
             for tenant in tenants:
                 self.logger.log(tenant.tenant_id)
-            print()
+            self.logger.newline(1)
             return
 
         self.logger.error(f"No tenants found\n")

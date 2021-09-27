@@ -30,6 +30,11 @@ class Logger:
         # Typically used to print a general message.
         print(message)
 
+    def newline(self, num_newlines):
+        # Used to create space around command outputs on the CLI.
+        for i in range(num_newlines):
+            print()
+
     def info(self, message=""):
         # Typically displayed when statuses change.
         print(f"\n{styles.INFO}Info:{styles.RESET} {message}")
