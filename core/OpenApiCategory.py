@@ -1,15 +1,15 @@
-"""
-Handles the parsing and execution of commands specified in the OpenAPI specs.
-
-Different tools, such as Tapipy, may inherit from this to specify their own
-specific categories and commands.
-"""
-
 from core.TapipyCategory import TapipyCategory
+
+from handlers.arg_options.OpenApiCategory import OpenApiCategory as ArgOptHandler
 
 # TODO Use client initialization logic from Tapipy in OpenApiCategory
 class OpenApiCategory(TapipyCategory):
-    """Overwrites the execute method to access the Tapipy client directly."""
+    """
+    Handles the parsing and execution of commands specified in the OpenAPI specs.
+
+    Different tools, such as Tapipy, may inherit from this to specify their own
+    specific categories and commands.
+    """
     operation = None
     resource = None
 
@@ -17,8 +17,15 @@ class OpenApiCategory(TapipyCategory):
         TapipyCategory.__init__(self)
 
     def execute(self, args) -> None:
-        """Executes the OpenAPI command."""
+        """Overwrites the execute method to call the Tapipy client directly."""
         try:
+            # Handle argument options.
+            # NOTE: Arg option handler may update the state of the category.
+            arg_opt_handler = ArgOptHandler()
+            args = arg_opt_handler.handle(self, args)
+
+            # Check that all keyword args for a given operation are
+            # present.
             self.validate_keyword_args()
 
             if len(args) == 0 and len(self.keyword_args) == 0:
@@ -30,7 +37,7 @@ class OpenApiCategory(TapipyCategory):
             else:
                 result = self.operation(*args, **self.keyword_args)
 
-            if type(result) == enumerate:
+            if type(result) == enumerate or type(result) == list:
                 for item in result:
                     self.logger.log(item)
                 return
@@ -59,7 +66,7 @@ class OpenApiCategory(TapipyCategory):
             self.exit(1)
 
     def validate_keyword_args(self):
-        """Validates the keywords required by an OpenAPI command."""
+        """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
         for param in self.operation.path_parameters:
             if param.required:
