@@ -1,9 +1,10 @@
-from core.TapipyCategory import TapipyCategory
+from tabulate import tabulate
 
+from core.Category import Category
+from core.Authenticator import Authenticator as Auth
 from handlers.arg_options.OpenApiCategory import OpenApiCategory as ArgOptHandler
 
-# TODO Use client initialization logic from Tapipy in OpenApiCategory
-class OpenApiCategory(TapipyCategory):
+class OpenApiCategory(Category):
     """
     Handles the parsing and execution of commands specified in the OpenAPI specs.
 
@@ -14,7 +15,15 @@ class OpenApiCategory(TapipyCategory):
     resource = None
 
     def __init__(self):
-        TapipyCategory.__init__(self)
+        Category.__init__(self)
+        try:
+            self.client = Auth().authenticate()
+            if self.client == None:
+                self.exit()
+        except SystemExit:
+            self.exit()
+        except:
+            raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
 
     def execute(self, args) -> None:
         """Overwrites the execute method to call the Tapipy client directly."""
@@ -37,12 +46,13 @@ class OpenApiCategory(TapipyCategory):
             else:
                 result = self.operation(*args, **self.keyword_args)
 
-            if type(result) == enumerate or type(result) == list:
-                for item in result:
-                    self.logger.log(item)
+            if type(result) == list:
+                for _, item in enumerate(result):
+                    self.logger.log(tabulate(vars(item).items(), tablefmt="fancy_grid"))
+                
                 return
 
-            self.logger.log(result)
+            self.logger.log(tabulate(vars(result).items(), ["Key", "Value"], tablefmt="fancy_grid"))
             return
         except Exception as e:
             self.logger.error(e)
