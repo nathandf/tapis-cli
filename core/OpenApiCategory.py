@@ -1,5 +1,6 @@
 from tabulate import tabulate
 
+from configs import settings
 from core.Category import Category
 from core.Authenticator import Authenticator as Auth
 from handlers.arg_options.OpenApiCategory import OpenApiCategory as ArgOptHandler
@@ -28,8 +29,8 @@ class OpenApiCategory(Category):
     def execute(self, args) -> None:
         """Overwrites the execute method to call the Tapipy client directly."""
         try:
+            self.logger.debug(self.option_set)
             # Handle argument options.
-            # NOTE: Arg option handler may update the state of the category.
             arg_opt_handler = ArgOptHandler()
             args = arg_opt_handler.handle(self, args)
 
@@ -37,14 +38,7 @@ class OpenApiCategory(Category):
             # present.
             self.validate_keyword_args()
 
-            if len(args) == 0 and len(self.keyword_args) == 0:
-                result = self.operation()
-            elif len(args) > 0 and len(self.keyword_args) == 0:
-                result = self.operation(*args)
-            elif len(args) == 0 and len(self.keyword_args) > 0:
-                result = self.operation(**self.keyword_args)
-            else:
-                result = self.operation(*args, **self.keyword_args)
+            result = self.operation(*args, **self.keyword_args)
 
             if type(result) == list:
                 for _, item in enumerate(result):
@@ -54,6 +48,7 @@ class OpenApiCategory(Category):
 
             self.logger.log(tabulate(vars(result).items(), ["Key", "Value"], tablefmt="fancy_grid"))
             return
+
         except Exception as e:
             self.logger.error(e)
 

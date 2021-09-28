@@ -9,8 +9,9 @@ import sys
 import types
 
 from typing import Dict
-from utils.Logger import Logger
 
+from utils.Logger import Logger
+from core.options import option_registrar
 
 class Category:
     """ 
@@ -18,6 +19,7 @@ class Category:
     If the user wants to add non-TAPIS categories and commands, the new parser
     should inherit from this category. See 'TapipyCategory.py' for an example.
     """
+    option_set = []
     options = []
     keyword_args: Dict[str, str] = {}
     arg_options: Dict[str, str] = {}
@@ -27,8 +29,9 @@ class Category:
 
     def __init__(self):
         self.logger = Logger()
+        self.option_set = option_registrar.get_option_set(type(self).__name__)
 
-    def help(self, **args):
+    def help(self, **_):
         """
         \nGeneral usage:
         '*' indicates optional

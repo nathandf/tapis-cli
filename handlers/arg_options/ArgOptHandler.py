@@ -1,6 +1,6 @@
 import os, json
 
-class ArgOptionHandler:
+class ArgOptHandler:
 
     category = None
     args = []

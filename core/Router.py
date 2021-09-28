@@ -41,11 +41,11 @@ class Router:
         # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args.
         if find_spec(f"categories.{category_name.capitalize()}") is not None:
-            # Import and instantiate the category
+            # Import the category
             module = import_module( f"categories.{category_name.capitalize()}", "./" )
-            category: type[Category] = getattr(module, f"{category_name.capitalize()}")()
+            category_class: type[Category] = getattr(module, f"{category_name.capitalize()}")
 
-            if not hasattr(category, command_name):
+            if not hasattr(category_class, command_name):
                 # If the command being invoked doesn't exist on the category, 
                 # update the category to be an instance of core.OpenApiCategory
                 category = OpenApiCategory()
@@ -58,6 +58,10 @@ class Router:
 
                 return (category, positional_args)
             
+            # The category class has a method by the command name.
+            # Instantiate the category class
+            category = category_class()
+
             # Set the options and command
             category.set_command(command_name)
             category.set_options(options)
