@@ -1,5 +1,7 @@
 from tabulate import tabulate
 
+import core.handlers
+
 from configs import settings
 from core.Category import Category
 from core.Authenticator import Authenticator as Auth
@@ -29,10 +31,14 @@ class OpenApiCategory(Category):
     def execute(self, args) -> None:
         """Overwrites the execute method to call the Tapipy client directly."""
         try:
-            self.logger.debug(self.option_set)
-            # Handle argument options.
-            arg_opt_handler = ArgOptHandler()
-            args = arg_opt_handler.handle(self, args)
+            for option in self.option_set:
+                if option.name not in self.arg_options:
+                    continue
+                if not hasattr(core.handlers, option.handler):
+                    raise ValueError(f"Option handler '{option.handler} does not exist'")
+
+                fn = getattr(core.handlers, option.handler)
+                args = fn(self, args)
 
             # Check that all keyword args for a given operation are
             # present.
