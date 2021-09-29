@@ -45,3 +45,11 @@ class OptionRegistrar:
             return self.option_sets[category]
 
         return []
+
+    # Combine the options of one category to another. Specific options
+    # can be selected by providing a list with the options' name in the
+    # options keyword. If strict is set to True, an error will be thrown
+    # categories contain duplicate option names. Otherwise, the option 
+    # in the to_category will be overwritten.
+    def use(self, from_category, to_category, options=[], strict=False):
+        pass
