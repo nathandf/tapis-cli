@@ -15,12 +15,12 @@ class Router:
     Commands and their options are passed into the router.
     The options are parsed and then the command is resolved.
     """
-    command_index: int = 1
+    command_index: int = 0
     logger: Logger = None
     tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
-    arg_option_tag_pattern = r"[-]{1}([\w]{1}[\w]*)"
+    arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
     kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
-    cmd_option_pattern = r"^[-]{1}([a-z]+[a-z_]*)$"
+    cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
 
     def __init__(self):
         self.logger = Logger()
@@ -28,9 +28,11 @@ class Router:
     def resolve(self, args: List[str]) -> Tuple[Category, List[str]]:
         """The command is resolved here."""
 
+        # Category name
+        category_name: str = args.pop(0)
+
         # Parse the arguments and extract the values
         (
-            category_name,
             cmd_name,
             cmd_options,
             arg_options,
@@ -129,11 +131,9 @@ class Router:
             Dict[str, str],
             List[str]
         ]:
-        # Category name
-        category_name: str = args[0]
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
-        cmd_options = self.parse_cmd_options(args[1:])
+        cmd_options = self.parse_cmd_options(args[0:])
         # Set the command on the category.
         cmd_name: str = args[self.command_index]
         # Every element in the args list after the command index are arguments
@@ -166,7 +166,6 @@ class Router:
                 pos_args.append(item)
 
         return (
-            category_name,
             cmd_name,
             cmd_options,
             arg_options,

@@ -34,7 +34,7 @@ class OpenApiCategory(Category):
                 if option.name not in self.arg_options:
                     continue
                 if not hasattr(core.handlers, option.handler):
-                    raise ValueError(f"Option handler '{option.handler} does not exist'")
+                    raise ValueError(f"Option handler '{option.handler}' does not exist")
 
                 fn = getattr(core.handlers, option.handler)
                 args = fn(self, args)
