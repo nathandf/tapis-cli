@@ -5,7 +5,6 @@ import core.handlers
 from configs import settings
 from core.Category import Category
 from core.Authenticator import Authenticator as Auth
-from handlers.arg_options.OpenApiCategory import OpenApiCategory as ArgOptHandler
 
 class OpenApiCategory(Category):
     """

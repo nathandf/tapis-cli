@@ -62,7 +62,7 @@ class Category:
 
         return
     
-    def set_options(self, options: list) -> None:
+    def set_cmd_options(self, options: list) -> None:
         """Any options for the command are logged to the class."""
         self.options = options
 

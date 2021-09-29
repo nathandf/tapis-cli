@@ -1,9 +1,8 @@
 from enum import Enum
 
 class HandlerPrecedence(Enum):
-    FIRST = "before"
-    LAST = "after",
-    NONE = None
+    BEFORE = "before"
+    AFTER = "after"
 
 class Option:
     def __init__(self,
@@ -12,8 +11,8 @@ class Option:
         usage: str = None,
         params: tuple = (),
         handler: str = None,
-        precedence: HandlerPrecedence = "before"
-        
+        precedence: HandlerPrecedence = "before",
+        dependencies: list = []
     ):
         self.name = name
         self.aliases = aliases
@@ -21,3 +20,4 @@ class Option:
         self.params = params
         self.handler = handler
         self.precedence = precedence
+        self.dependencies = dependencies

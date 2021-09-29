@@ -3,12 +3,14 @@
 from os import CLD_CONTINUED
 import re
 
-from core.Category import Category
-from importlib import import_module
 from importlib.util import find_spec
-from utils.Logger import Logger
+from importlib import import_module
 from typing import List, Tuple, Dict
+
+from core.Category import Category
 from core.OpenApiCategory import OpenApiCategory
+from core.options import option_registrar
+from utils.Logger import Logger
 
 class Router:
     """
@@ -52,7 +54,7 @@ class Router:
                 # Set the resource, operation, and options
                 category.set_resource(category_name)
                 category.set_operation(command_name)
-                category.set_options(options)
+                category.set_cmd_options(options)
                 category.set_arg_options(arg_options)
                 category.set_keyword_args(keyword_args)
 
@@ -64,7 +66,7 @@ class Router:
 
             # Set the options and command
             category.set_command(command_name)
-            category.set_options(options)
+            category.set_cmd_options(options)
             category.set_arg_options(arg_options)
             category.set_keyword_args(keyword_args)
 
@@ -78,7 +80,7 @@ class Router:
         # Set the resource, operation, and options
         category.set_resource(category_name)
         category.set_operation(command_name)
-        category.set_options(options)
+        category.set_cmd_options(options)
         category.set_arg_options(arg_options)
         category.set_keyword_args(keyword_args)
 
