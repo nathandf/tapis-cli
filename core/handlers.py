@@ -8,7 +8,7 @@ def jsonFileToKeywordArgs(category, args):
         # Convert the definition file into a json object
         obj = json.loads(open(category.arg_options["j"], "r").read())
         for item, value in obj.items():
-            category.keyword_args[item] = value
+            category.kw_args[item] = value
         
         return args
 

@@ -41,9 +41,9 @@ class OpenApiCategory(Category):
 
             # Check that all keyword args for a given operation are
             # present.
-            self.validate_keyword_args()
+            self.validate_kw_args()
 
-            result = self.operation(*args, **self.keyword_args)
+            result = self.operation(*args, **self.kw_args)
 
             if type(result) == list:
                 for _, item in enumerate(result):
@@ -75,14 +75,14 @@ class OpenApiCategory(Category):
             self.logger.error(f"{type(self).__name__} has no resource '{resource_name}'\n")
             self.exit(1)
 
-    def validate_keyword_args(self):
+    def validate_kw_args(self):
         """Validates the keyword arguments required by an OpenAPI operation."""
         required_params = []
         for param in self.operation.path_parameters:
             if param.required:
                 required_params.append(param.name)
 
-        keyword_arg_keys = self.keyword_args.keys()
+        kw_arg_keys = self.kw_args.keys()
         for param in required_params:
-            if param not in keyword_arg_keys:
+            if param not in kw_arg_keys:
                 raise Exception(f"'{param}' is a required keyword argument. Required keyword arguments: {required_params}")

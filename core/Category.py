@@ -21,7 +21,7 @@ class Category:
     """
     option_set = []
     options = []
-    keyword_args: Dict[str, str] = {}
+    kw_args: Dict[str, str] = {}
     arg_options: Dict[str, str] = {}
     command = "help"
     logger = None
@@ -68,8 +68,8 @@ class Category:
 
         return
 
-    def set_keyword_args(self, keyword_args: Dict[str, str]) -> None:
-        self.keyword_args = keyword_args
+    def set_kw_args(self, kw_args: Dict[str, str]) -> None:
+        self.kw_args = kw_args
         return
 
     def set_arg_options(self, arg_options: Dict[str, str]) -> None:
