@@ -1,6 +1,7 @@
 from enum import Enum
 
 class HandlerPrecedence(Enum):
+    CMD = "cmd"
     BEFORE = "before"
     AFTER = "after"
 

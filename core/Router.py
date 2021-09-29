@@ -34,7 +34,7 @@ class Router:
         (
             category_name,
             command_name,
-            options,
+            cmd_options,
             arg_options,
             keyword_args,
             positional_args
@@ -54,7 +54,7 @@ class Router:
                 # Set the resource, operation, and options
                 category.set_resource(category_name)
                 category.set_operation(command_name)
-                category.set_cmd_options(options)
+                category.set_cmd_options(cmd_options)
                 category.set_arg_options(arg_options)
                 category.set_keyword_args(keyword_args)
 
@@ -66,7 +66,7 @@ class Router:
 
             # Set the options and command
             category.set_command(command_name)
-            category.set_cmd_options(options)
+            category.set_cmd_options(cmd_options)
             category.set_arg_options(arg_options)
             category.set_keyword_args(keyword_args)
 
@@ -80,29 +80,29 @@ class Router:
         # Set the resource, operation, and options
         category.set_resource(category_name)
         category.set_operation(command_name)
-        category.set_cmd_options(options)
+        category.set_cmd_options(cmd_options)
         category.set_arg_options(arg_options)
         category.set_keyword_args(keyword_args)
 
         return (category, positional_args)
         
         
-    def parse_options(self, args: List[str]) -> List[str]:
+    def parse_cmd_options(self, args: List[str]) -> List[str]:
         """Extract options from the arguments."""
         # Regex pattern for options.
         pattern = re.compile(rf"{self.option_pattern}")
         # First arg in the args list is the category.
         # For every option found in the args list, increment the command_index
         # by 1. If none are found, then the command name is at index 1.
-        options = []
+        cmd_options = []
         for option in args:
             if pattern.match(option):
-                options.append(option)
+                cmd_options.append(option)
                 self.command_index += 1
                 continue
             break
 
-        return options
+        return cmd_options
 
     def parse_keyword_args(self, args: List[str]) -> Dict[str, str]:
         """Parse keywords passed in as arguments."""
@@ -128,7 +128,7 @@ class Router:
         category_name: str = args[0]
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
-        options = self.parse_options(args[1:])
+        cmd_options = self.parse_cmd_options(args[1:])
         # Set the command on the category.
         command_name: str = args[self.command_index]
         # Every element in the args list after the command index are arguments
@@ -163,7 +163,7 @@ class Router:
         return (
             category_name,
             command_name,
-            options,
+            cmd_options,
             arg_options,
             keyword_args,
             positional_args
