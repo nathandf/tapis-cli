@@ -43,12 +43,12 @@ class Router:
             pos_args
         ) = self.resolve_args(args)
 
-        self.logger.debug(category_name)
-        self.logger.debug(cmd_name)
-        self.logger.debug(cmd_options)
-        self.logger.debug(arg_options)
-        self.logger.debug(kw_args)
-        self.logger.debug(pos_args)
+        self.logger.debug(f"Category Name: {category_name}")
+        self.logger.debug(f"Command Name: {cmd_name}")
+        self.logger.debug(f"Command Options: {cmd_options}")
+        self.logger.debug(f"Arg Options: {arg_options}")
+        self.logger.debug(f"Keyword Args: {kw_args}")
+        self.logger.debug(f"Positional Args: {pos_args}")
         
         # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args.
@@ -59,7 +59,7 @@ class Router:
 
             if not hasattr(category_class, cmd_name):
                 # If the command being invoked doesn't exist on the category, 
-                # update the category to be an instance of core.OpenApiCategory
+                # instantiate an OpenApiCategory
                 category = OpenApiCategory()
                 # Set the resource, operation, and options
                 category.set_resource(category_name)
@@ -134,7 +134,6 @@ class Router:
             Dict[str, str],
             List[str]
         ]:
-        self.logger.debug(f"Args: {args}")
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
         cmd_options = self.parse_cmd_options(args[0:])
