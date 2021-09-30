@@ -5,9 +5,9 @@ option_registrar = OptionRegistrar()
 
 option_registrar.register("core.all", [
     Option("-v", aliases=["-verbose"], usage="show additional information for a command invocation",
-    precedence="cmd"),
+    context="cmd"),
     Option("-h", aliases=["-help"], usage="display help information for a command",
-    precedence="cmd")
+    context="cmd")
 ])
 
 option_registrar.register("OpenApiCategory", [

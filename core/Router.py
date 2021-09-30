@@ -1,5 +1,5 @@
 """Handles the resolving (parsing) of commands and their options."""
-import re
+import re, random, string
 
 from importlib.util import find_spec
 from importlib import import_module
@@ -21,9 +21,12 @@ class Router:
     arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
     kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
     cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
+    space_replacement = ""
 
     def __init__(self):
         self.logger = Logger()
+        buffer = "[*]"
+        self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
     def resolve(self, args: List[str]) -> Tuple[Category, List[str]]:
         """The command is resolved here."""
@@ -38,7 +41,7 @@ class Router:
             arg_options,
             kw_args,
             pos_args
-        ) = self.parse_args(args)
+        ) = self.resolve_args(args)
 
         self.logger.debug(category_name)
         self.logger.debug(cmd_name)
@@ -111,19 +114,19 @@ class Router:
 
         return cmd_options
 
-    def parse_kw_args(self, args: List[str]) -> Dict[str, str]:
-        """Parse keywords passed in as arguments."""
+    def parse(self, args: List[str], tag_pattern) -> Dict[str, str]:
+        # Escape spaces in args
+        escaped_args = self.escape_args(args)
+
         # Regex pattern for keyword args and their values
-        pattern = re.compile(rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
-        return dict(pattern.findall(" " + " ".join(args)))
+        pattern = re.compile(rf"(?<=[\s]){tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
+        escaped_matches = dict(pattern.findall(" " + self.args_to_str(escaped_args)))
+        unescaped_matches = self.unescape_matches(escaped_matches)
 
-    def parse_arg_options(self, args: List[str]) -> Dict:
-        # Regex pattern for arg options and their values
-        pattern = re.compile(rf"(?<=[\s]){self.arg_option_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
-        return dict(pattern.findall(" " + " ".join(args)))
+        return unescaped_matches
+        # return dict(pattern.findall(" " + self.args_to_str(args)))
 
-    def parse_args(self,
-        args: List[str]) -> Tuple[
+    def resolve_args(self, args: List[str]) -> Tuple[
             str,
             str,
             List[str],
@@ -131,16 +134,19 @@ class Router:
             Dict[str, str],
             List[str]
         ]:
+        self.logger.debug(f"Args: {args}")
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
         cmd_options = self.parse_cmd_options(args[0:])
+
         # Set the command on the category.
         cmd_name: str = args[self.command_index]
+
         # Every element in the args list after the command index are arguments
         # for the category.
         command_args = args[self.command_index+1:]
-        kw_args = self.parse_kw_args(command_args)
-        arg_options = self.parse_arg_options(command_args)
+        kw_args = self.parse(command_args, self.kw_arg_tag_pattern)
+        arg_options = self.parse(command_args, self.arg_option_tag_pattern)
 
         # Remove all options and keyword args from the args list. Only
         # positional arguments will remain
@@ -172,3 +178,26 @@ class Router:
             kw_args,
             pos_args
         )
+
+    def args_to_str(self, args):
+        arg_str = ""
+        for arg in args:
+            arg_str = arg_str + " " + str(arg)
+
+        return arg_str.lstrip(" ")
+
+    def escape_args(self, args: List[str]):
+        escaped_args = []
+        for arg in args:
+            escaped_args.append(arg.replace(" ", self.space_replacement))
+
+        return escaped_args
+
+    def unescape_matches(self, matches: Dict[str, str]):
+        unescaped_matches = {}
+        for key, value in matches.items():
+            key = key.replace(self.space_replacement, " ")
+            value = value.replace(self.space_replacement, " ")
+            unescaped_matches[key] = value
+
+        return unescaped_matches

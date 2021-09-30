@@ -1,6 +1,6 @@
 from enum import Enum
 
-class HandlerPrecedence(Enum):
+class HandlerContext(Enum):
     CMD = "cmd"
     BEFORE = "before"
     AFTER = "after"
@@ -12,7 +12,7 @@ class Option:
         usage: str = None,
         params: tuple = (),
         handler: str = None,
-        precedence: HandlerPrecedence = "before",
+        context: HandlerContext = "before",
         dependencies: list = []
     ):
         self.name = name
@@ -20,5 +20,5 @@ class Option:
         self.usage = usage
         self.params = params
         self.handler = handler
-        self.precedence = precedence
+        self.context = context
         self.dependencies = dependencies
