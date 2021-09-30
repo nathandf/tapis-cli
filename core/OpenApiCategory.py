@@ -30,20 +30,36 @@ class OpenApiCategory(Category):
     def execute(self, args) -> None:
         """Overwrites the execute method to call the Tapipy client directly."""
         try:
+            handlers = { "cmd": [], "before": [], "after": [] }
             for option in self.option_set:
-                if option.name not in self.arg_options:
+                # If the current option from the option set has not been provided by the user,
+                # ignore it
+                if option.name not in self.options and option.name not in self.arg_options:
                     continue
-                if not hasattr(core.handlers, option.handler):
-                    raise ValueError(f"Option handler '{option.handler}' does not exist")
 
-                fn = getattr(core.handlers, option.handler)
-                args = fn(self, args)
+                # If the current option from the option set HAS been provided but there is
+                # no handler specified, ignore it
+                if not hasattr(core.handlers, option.handler):
+                    continue
+                
+                # Register the handler
+                handlers[option.context].append(getattr(core.handlers, option.handler))
+            
+            for handler in handlers["cmd"]:
+                args = handler(self, args)
+
+            for handler in handlers["before"]:
+                args = handler(self, args)
+
 
             # Check that all keyword args for a given operation are
             # present.
             self.validate_kw_args()
 
             result = self.operation(*args, **self.kw_args)
+
+            for handler in handlers["after"]:
+                result = handler(self, result)
 
             if type(result) == list:
                 for _, item in enumerate(result):

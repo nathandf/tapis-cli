@@ -1,5 +1,6 @@
 from typing import List
-from core.Option import Option
+
+from core.Option import Option, HandlerContext
 
 class OptionRegistrar:
 
@@ -40,16 +41,23 @@ class OptionRegistrar:
 
         return
 
-    def get_option_set(self, category):
+    def get_option_set(self, category, context: type[HandlerContext]=None) -> List[type[Option]]:
+        options = []
         if category in self.option_sets:
-            return self.option_sets[category]
+            # Return all options if no context is specified
+            if context == None:
+                return self.option_sets[category]
 
-        return []
+            for option in self.option_sets[category]:
+                if option.context == context:
+                    options.append(option)
+                
+        return options
 
     # Combine the options of one category to another. Specific options
     # can be selected by providing a list with the options' name in the
     # options keyword. If strict is set to True, an error will be thrown
     # categories contain duplicate option names. Otherwise, the options 
     # in the to_category will be overwritten.
-    def use(self, from_category, to_category, options=[], strict=True):
+    def use(self, to_category, from_category, options=[], strict=True):
         pass

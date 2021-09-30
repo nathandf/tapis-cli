@@ -7,7 +7,6 @@ from typing import List, Tuple, Dict
 
 from core.Category import Category
 from core.OpenApiCategory import OpenApiCategory
-from core.options import option_registrar
 from utils.Logger import Logger
 
 class Router:
