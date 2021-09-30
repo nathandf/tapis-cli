@@ -3,10 +3,11 @@
 import re
 from typing import Union
 
+from tapipy.tapis import Tapis
+
 from configs import settings
 from core.Category import Category
 from core.Authenticator import Authenticator as Auth
-from tapipy.tapis import Tapis
 
 
 class TapipyCategory(Category):

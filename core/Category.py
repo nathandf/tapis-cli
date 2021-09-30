@@ -11,7 +11,7 @@ import types
 from typing import Dict
 
 from utils.Logger import Logger
-from configs.options import option_registrar
+from core.options import option_registrar
 
 class Category:
     """ 
