@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Dict
 
 class HandlerContext(Enum):
     CMD = "cmd"
@@ -10,10 +11,14 @@ class Option:
         name: str,
         aliases: list = [],
         usage: str = None,
-        params: tuple = (),
+        params: list[Dict[str, str, str]] = [],
         handler: str = None,
         context: HandlerContext = "before",
-        dependencies: list = []
+        required: bool = False,
+        require: list = [],
+        exclude: list = [],
+        precedes: list = [],
+        follows: list = []
     ):
         self.name = name
         self.aliases = aliases
@@ -21,4 +26,8 @@ class Option:
         self.params = params
         self.handler = handler
         self.context = context
-        self.dependencies = dependencies
+        self.required = required
+        self.require = require
+        self.exclude = exclude
+        self.precedes = precedes
+        self.follows = follows

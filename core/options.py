@@ -7,14 +7,14 @@ option_registrar.register("core.all", [
     Option("-v", aliases=["-verbose"], usage="show additional information for a command invocation",
     context="cmd"),
     Option("-h", aliases=["-help"], usage="display help information for a command",
-    context="cmd")
+    context="cmd", handler="help")
 ])
 
 option_registrar.register("OpenApiCategory", [
     Option("-v", aliases=["-verbose"], usage="show additional information for a command invocation",
     context="cmd"),
     Option("-h", aliases=["-help"], usage="display help information for a command",
-    context="cmd"),
+    context="cmd", handler="help"),
     Option("-j", aliases=["-json", "-jk"], usage="a json filename",
         params=("filename"), handler="jsonFileToKeywordArgs"),
     Option("-f", aliases=["-file, -contents"], usage="a filename",

@@ -59,5 +59,6 @@ class OptionRegistrar:
     # options keyword. If strict is set to True, an error will be thrown
     # categories contain duplicate option names. Otherwise, the options 
     # in the to_category will be overwritten.
+    # TODO implement
     def use(self, to_category, from_category, options=[], strict=True):
         pass

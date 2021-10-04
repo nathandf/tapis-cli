@@ -17,7 +17,6 @@ class Router:
     command_index: int = 0
     logger: Logger = None
     tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
-    arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
     kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
     cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
     space_replacement = ""
@@ -34,20 +33,7 @@ class Router:
         category_name: str = args.pop(0)
 
         # Parse the arguments and extract the values
-        (
-            cmd_name,
-            cmd_options,
-            arg_options,
-            kw_args,
-            pos_args
-        ) = self.resolve_args(args)
-
-        self.logger.debug(f"Category Name: {category_name}")
-        self.logger.debug(f"Command Name: {cmd_name}")
-        self.logger.debug(f"Command Options: {cmd_options}")
-        self.logger.debug(f"Arg Options: {arg_options}")
-        self.logger.debug(f"Keyword Args: {kw_args}")
-        self.logger.debug(f"Positional Args: {pos_args}")
+        (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
         
         # The first step of command resolution is to check if a 
         # user-defined category exists by the name provided in args.
@@ -64,10 +50,9 @@ class Router:
                 category.set_resource(category_name)
                 category.set_operation(cmd_name)
                 category.set_cmd_options(cmd_options)
-                category.set_arg_options(arg_options)
                 category.set_kw_args(kw_args)
 
-                return (category, pos_args)
+                return (category, args)
             
             # The category class has a method by the command name.
             # Instantiate the category class
@@ -76,11 +61,10 @@ class Router:
             # Set the options and command
             category.set_command(cmd_name)
             category.set_cmd_options(cmd_options)
-            category.set_arg_options(arg_options)
             category.set_kw_args(kw_args)
 
             # Return the category with command and options set.
-            return (category, pos_args)
+            return (category, args)
 
         # If a user-defined category doesn't exist, return an instance
         # of core.OpenApiCategory
@@ -90,28 +74,31 @@ class Router:
         category.set_resource(category_name)
         category.set_operation(cmd_name)
         category.set_cmd_options(cmd_options)
-        category.set_arg_options(arg_options)
         category.set_kw_args(kw_args)
 
-        return (category, pos_args)
+        return (category, args)
         
         
-    def parse_cmd_options(self, args: List[str]) -> List[str]:
+    def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
         """Extract options from the arguments."""
         # Regex pattern for options.
         pattern = re.compile(rf"{self.cmd_option_pattern}")
-        # First arg in the args list is the category.
-        # For every option found in the args list, increment the command_index
-        # by 1. If none are found, then the command name is at index 1.
+        # Iterate through the args until no more options are found
         cmd_options = []
-        for option in args:
+        option_indicies = []
+        for index, option in enumerate(args):
             if pattern.match(option):
                 cmd_options.append(option)
+                option_indicies.append(index)
                 self.command_index += 1
                 continue
             break
+        
+        # Remove the cmd_options from the args
+        for index in option_indicies:
+            args.pop(index)
 
-        return cmd_options
+        return (cmd_options, args)
 
     def parse(self, args: List[str], tag_pattern) -> Dict[str, str]:
         # Escape spaces in args
@@ -123,58 +110,82 @@ class Router:
         unescaped_matches = self.unescape_matches(escaped_matches)
 
         return unescaped_matches
-        # return dict(pattern.findall(" " + self.args_to_str(args)))
+
+    def parse_kw_args(self, args: List[str]) -> Tuple[Dict[str, str], List[str]]:
+        # Escape spaces in args
+        escaped_args = self.escape_args(args)
+
+        # Regex pattern for keyword args and their values
+        pattern = re.compile(rf"(?<=[\s]){self.kw_arg_tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
+        escaped_matches = dict(pattern.findall(" " + self.args_to_str(escaped_args)))
+        unescaped_matches = self.unescape_matches(escaped_matches)
+
+        # Convert the dictionary of escaped matches into a list
+        key_vals = []
+        for items in unescaped_matches.items():
+            # Append '--' to the value of every item in the key_vals list
+            # with an even index. The double dash was removed while parsing
+            # and it needs to be added back in order to remove it from the args list
+            for index, item in enumerate(items):
+                item = f"--{item}" if index % 2 == 0 else item
+                key_vals.append(item)
+
+        # Remove the keywords args and their values from args
+        modified_args = []
+        for arg in args:
+            if arg not in key_vals:
+                modified_args.append(arg)
+
+        self.logger.debug(f"MODIFIED ARGS: {modified_args}")
+
+        return (unescaped_matches, modified_args)
 
     def resolve_args(self, args: List[str]) -> Tuple[
             str,
             str,
-            List[str],
-            Dict[str, str],
             Dict[str, str],
             List[str]
         ]:
         # Parse the options from the args. This also determines the
         # index of the command name via self.command_index
-        cmd_options = self.parse_cmd_options(args[0:])
+        (cmd_options, args) = self.parse_cmd_options(args)
 
-        # Set the command on the category.
-        cmd_name: str = args[self.command_index]
+        # Get the command for the category from the modified args list.
+        cmd_name = args.pop(0)
 
-        # Every element in the args list after the command index are arguments
-        # for the category.
-        command_args = args[self.command_index+1:]
-        kw_args = self.parse(command_args, self.kw_arg_tag_pattern)
-        arg_options = self.parse(command_args, self.arg_option_tag_pattern)
+        # Parse the keyword arguments and their values from the args list
+        (kw_args, args) = self.parse_kw_args(args)
 
-        # Remove all options and keyword args from the args list. Only
-        # positional arguments will remain
-        pos_args = []
-        kw_arg_indicies = []
-        arg_option_indicies = []
+        #arg_options = self.parse(args, self.arg_option_tag_pattern)
 
-        # Isolate positions arguments from the command args
-        for index, item in enumerate(command_args):
-            if re.match(rf"{self.kw_arg_tag_pattern}", item) is not None and index not in kw_arg_indicies:
-                # Append the index of key
-                kw_arg_indicies.append(index)
-                # Append the index of the value
-                kw_arg_indicies.append(index+1)
-            if re.match(rf"{self.arg_option_tag_pattern}", item) is not None and index not in arg_option_indicies:
-                # Append the index of key
-                arg_option_indicies.append(index)
-                # Append the index of the value
-                arg_option_indicies.append(index+1)
+        # # Remove all options and keyword args from the args list. Only
+        # # positional arguments will remain
+        # pos_args = []
+        # kw_arg_indicies = []
+        # arg_option_indicies = []
+
+        # # Isolate positions arguments from the command args
+        # for index, item in enumerate(args):
+        #     if re.match(rf"{self.kw_arg_tag_pattern}", item) is not None and index not in kw_arg_indicies:
+        #         # Append the index of key
+        #         kw_arg_indicies.append(index)
+        #         # Append the index of the value
+        #         kw_arg_indicies.append(index+1)
+        #     if re.match(rf"{self.arg_option_tag_pattern}", item) is not None and index not in arg_option_indicies:
+        #         # Append the index of key
+        #         arg_option_indicies.append(index)
+        #         # Append the index of the value
+        #         arg_option_indicies.append(index+1)
         
-        for index, item in enumerate(command_args):
-            if index not in kw_arg_indicies and index not in arg_option_indicies:
-                pos_args.append(item)
+        # for index, item in enumerate(args):
+        #     if index not in kw_arg_indicies and index not in arg_option_indicies:
+        #         pos_args.append(item)
 
         return (
             cmd_name,
             cmd_options,
-            arg_options,
             kw_args,
-            pos_args
+            args
         )
 
     def args_to_str(self, args):

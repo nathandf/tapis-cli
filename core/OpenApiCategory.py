@@ -29,6 +29,7 @@ class OpenApiCategory(Category):
 
     def execute(self, args) -> None:
         """Overwrites the execute method to call the Tapipy client directly."""
+        self.parse_args(args)
         try:
             handlers = { "cmd": [], "before": [], "after": [] }
             for option in self.option_set:
@@ -36,17 +37,17 @@ class OpenApiCategory(Category):
                 # ignore it
                 if option.name not in self.options and option.name not in self.arg_options:
                     continue
-
+                
                 # If the current option from the option set HAS been provided but there is
                 # no handler specified, ignore it
-                if not hasattr(core.handlers, option.handler):
+                if option.handler == None or not hasattr(core.handlers, option.handler):
                     continue
                 
                 # Register the handler
                 handlers[option.context].append(getattr(core.handlers, option.handler))
             
             for handler in handlers["cmd"]:
-                args = handler(self, args)
+                handler(self)
 
             for handler in handlers["before"]:
                 args = handler(self, args)
@@ -75,6 +76,7 @@ class OpenApiCategory(Category):
 
     def set_operation(self, operation_name: str) -> None:
         """Sets the operation to be performed upon execution."""
+        self.command_name = operation_name
         try:
             self.operation = getattr(self.resource, operation_name)
             return
