@@ -52,7 +52,6 @@ class OpenApiCategory(Category):
             for handler in handlers["before"]:
                 args = handler(self, args)
 
-
             # Check that all keyword args for a given operation are
             # present.
             self.validate_kw_args()

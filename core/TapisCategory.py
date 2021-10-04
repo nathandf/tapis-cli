@@ -10,7 +10,7 @@ from core.Category import Category
 from core.Authenticator import Authenticator as Auth
 
 
-class TapipyCategory(Category):
+class TapisCategory(Category):
     """A TAPIS-specific category."""
     client: Union[Tapis, None] = None
 
@@ -30,7 +30,7 @@ class TapipyCategory(Category):
         all_methods = dir(getattr(self.client, type(self).__name__.lower()))
         methods = []
 
-        pattern = re.compile(r"^[_]{2}[\w]+")
+        pattern = re.compile(r"^[_]{1:2}[\w]+")
         for method in all_methods:
             if not re.match(pattern, method):
                 methods.append(method)

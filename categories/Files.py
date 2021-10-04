@@ -2,14 +2,14 @@
 
 import os
 
-from core.TapipyCategory import TapipyCategory
+from core.TapisCategory import TapisCategory
 from tapipy.errors import InvalidInputError
 
 
-class Files(TapipyCategory):
+class Files(TapisCategory):
     """Contains all of the CRUD functions associated with files."""
     def __init__(self):
-        TapipyCategory.__init__(self)
+        TapisCategory.__init__(self)
         
     def delete(self, system_id, path) -> None:
         """Deletes the specified file from the target system."""

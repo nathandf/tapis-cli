@@ -1,13 +1,13 @@
 """Handles TAPIS functionality related to tenants."""
 
-from core.TapipyCategory import TapipyCategory
+from core.TapisCategory import TapisCategory
 from tapipy.errors import InvalidInputError
 
 
-class Tenants(TapipyCategory):
+class Tenants(TapisCategory):
     """Contains all CRUD functions associated with tenants."""
     def __init__(self):
-        TapipyCategory.__init__(self)
+        TapisCategory.__init__(self)
 
     def get(self, tenant_id) -> None:
         """Retrieve the details of a specified tenant."""
