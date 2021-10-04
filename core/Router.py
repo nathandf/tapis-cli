@@ -6,7 +6,7 @@ from importlib import import_module
 from typing import List, Tuple, Dict
 
 from core.Category import Category
-from core.OpenApiCategory import OpenApiCategory
+from core.TapipyCategory import TapipyCategory
 from utils.Logger import Logger
 
 class Router:
@@ -44,8 +44,8 @@ class Router:
 
             if not hasattr(category_class, cmd_name):
                 # If the command being invoked doesn't exist on the category, 
-                # instantiate an OpenApiCategory
-                category = OpenApiCategory()
+                # instantiate an TapipyCategory
+                category = TapipyCategory()
                 # Set the resource, operation, and options
                 category.set_resource(category_name)
                 category.set_operation(cmd_name)
@@ -67,8 +67,8 @@ class Router:
             return (category, args)
 
         # If a user-defined category doesn't exist, return an instance
-        # of core.OpenApiCategory
-        category = OpenApiCategory()
+        # of core.TapipyCategory
+        category = TapipyCategory()
 
         # Set the resource, operation, and options
         category.set_resource(category_name)
