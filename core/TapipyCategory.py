@@ -6,7 +6,7 @@ from configs import settings
 from core.Category import Category
 from core.Authenticator import Authenticator as Auth
 
-class OpenApiCategory(Category):
+class TapipyCategory(Category):
     """
     Handles the parsing and execution of commands specified in the OpenAPI specs.
 

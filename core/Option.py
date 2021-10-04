@@ -11,7 +11,7 @@ class Option:
         name: str,
         aliases: list = [],
         usage: str = None,
-        params: list[Dict[str, str, str]] = [],
+        params: list[Dict[str, str]] = [],
         handler: str = None,
         context: HandlerContext = "before",
         required: bool = False,

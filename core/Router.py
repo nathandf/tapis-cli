@@ -136,8 +136,6 @@ class Router:
             if arg not in key_vals:
                 modified_args.append(arg)
 
-        self.logger.debug(f"MODIFIED ARGS: {modified_args}")
-
         return (unescaped_matches, modified_args)
 
     def resolve_args(self, args: List[str]) -> Tuple[
@@ -155,31 +153,6 @@ class Router:
 
         # Parse the keyword arguments and their values from the args list
         (kw_args, args) = self.parse_kw_args(args)
-
-        #arg_options = self.parse(args, self.arg_option_tag_pattern)
-
-        # # Remove all options and keyword args from the args list. Only
-        # # positional arguments will remain
-        # pos_args = []
-        # kw_arg_indicies = []
-        # arg_option_indicies = []
-
-        # # Isolate positions arguments from the command args
-        # for index, item in enumerate(args):
-        #     if re.match(rf"{self.kw_arg_tag_pattern}", item) is not None and index not in kw_arg_indicies:
-        #         # Append the index of key
-        #         kw_arg_indicies.append(index)
-        #         # Append the index of the value
-        #         kw_arg_indicies.append(index+1)
-        #     if re.match(rf"{self.arg_option_tag_pattern}", item) is not None and index not in arg_option_indicies:
-        #         # Append the index of key
-        #         arg_option_indicies.append(index)
-        #         # Append the index of the value
-        #         arg_option_indicies.append(index+1)
-        
-        # for index, item in enumerate(args):
-        #     if index not in kw_arg_indicies and index not in arg_option_indicies:
-        #         pos_args.append(item)
 
         return (
             cmd_name,
