@@ -20,19 +20,26 @@ class Category:
     If the user wants to add non-TAPIS categories and commands, the new parser
     should inherit from this category. See 'TapipyCategory.py' for an example.
     """
-    option_set: type[OptionSet] = None
-    cmd_options = []
-    kw_args: Dict[str, str] = {}
-    arg_options: Dict[str, List[str]] = {}
-    command = "help"
-    override_exec = False
-    logger: type[Logger] = None
-    exit = sys.exit
-    arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
+    option_set: type[OptionSet]
+    cmd_options: list
+    kw_args: Dict[str, str]
+    arg_options: Dict[str, List[str]]
+    command: str
+    override_exec: bool
+    logger: type[Logger]
+    exit: callable
+    arg_option_tag_pattern: str
 
     def __init__(self):
-        self.logger = Logger()
         self.option_set = option_registrar.get_option_set(type(self).__name__)
+        self.cmd_options = []
+        self.kw_args = {}
+        self.arg_options = {}
+        self.command = "help"
+        self.override_exec = False
+        self.logger = Logger()
+        self.exit = sys.exit
+        self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
 
     def help(self):
         """
