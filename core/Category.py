@@ -115,10 +115,10 @@ class Category:
         return methods
 
     def parse_args(self, args: list[str]):
+        self.logger.debug(args)
         pos_args = []
         arg_option_indicies = []
         option_names = self.option_set.get_names()
-        self.logger.debug(option_names)
         for index, arg in enumerate(args):
             # This line will skip the indicies of arg option parameters
             if index in arg_option_indicies:
