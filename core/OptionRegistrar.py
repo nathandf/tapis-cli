@@ -10,13 +10,11 @@ class OptionRegistrar:
     option_sets: Dict[str, type[OptionSet]] = {}
     registered_names = []
     registered_aliases = []
-    logger: type[Logger] = None
 
     def __init__(self):
         self.option_sets = {}
         self.registered_names = []
         self.registered_aliases = []
-        self.logger = Logger()
 
     def register(self, category: str, options: List[type[Option]]) -> None:
         # Do not allow options to be registered for a single category more than once
@@ -48,13 +46,10 @@ class OptionRegistrar:
         self.registered_names = []
         self.registered_aliases = []
 
-        self.logger.debug([option.name for option in self.option_sets[category].options])
-
         return
 
     def get_option_set(self, category) -> type[OptionSet]:
         if category in self.option_sets.keys():
-            self.logger.debug(self.option_sets["TapipyCategory"].options)
             return self.option_sets[category]
                 
         return self.option_sets["core"]
