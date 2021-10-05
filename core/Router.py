@@ -84,36 +84,25 @@ class Router:
         
         
     def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
-        """Extract options from the arguments."""
+        """Parse the options that precede the command"""
         # Regex pattern for options.
         pattern = re.compile(rf"{self.cmd_option_pattern}")
         # Iterate through the args until no more options are found
         cmd_options = []
-        option_indicies = []
+        option_indices = []
         for index, option in enumerate(args):
             if pattern.match(option):
                 cmd_options.append(option)
-                option_indicies.append(index)
+                option_indices.append(index)
                 self.command_index += 1
                 continue
             break
         
         # Remove the cmd_options from the args
-        for index in option_indicies:
+        for index in sorted(option_indices, reverse=True):
             args.pop(index)
 
         return (cmd_options, args)
-
-    def parse(self, args: List[str], tag_pattern) -> Dict[str, str]:
-        # Escape spaces in args
-        escaped_args = self.escape_args(args)
-
-        # Regex pattern for keyword args and their values
-        pattern = re.compile(rf"(?<=[\s]){tag_pattern}[\s]+{self.tag_value_pattern}(?=[\s])*", re.MULTILINE | re.UNICODE)
-        escaped_matches = dict(pattern.findall(" " + self.args_to_str(escaped_args)))
-        unescaped_matches = self.unescape_matches(escaped_matches)
-
-        return unescaped_matches
 
     def parse_kw_args(self, args: List[str]) -> Tuple[Dict[str, str], List[str]]:
         # Escape spaces in args

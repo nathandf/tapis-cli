@@ -116,21 +116,18 @@ class Category:
 
     def parse_args(self, args: list[str]):
         pos_args = []
-        arg_option_param_indicies = []
+        arg_option_param_indices = []
         option_names = self.option_set.get_names()
-        self.logger.debug(f"Args: {args}")
 
         for index, arg in enumerate(args):
-            self.logger.debug(f"Current Arg: {arg}")
-            # This line will skip the indicies of arg option parameters
-            if index in arg_option_param_indicies:
+            # This line will skip the indices of arg option parameters
+            if index in arg_option_param_indices:
                 continue
 
             # If the arg doesn't match the arg_option_tag_pattern, then it
             # is a positional argument
             if re.match(rf"{self.arg_option_tag_pattern}", arg) == None:
                 pos_args.append(arg)
-                self.logger.debug(f"Pos Args: {pos_args}")
                 continue
 
             # Validate options against the category's option set
@@ -152,7 +149,7 @@ class Category:
             arg_option_vals = args[next_arg_index:last_arg_index]
             
             for i in range(next_arg_index, last_arg_index):
-                arg_option_param_indicies.append(i)
+                arg_option_param_indices.append(i)
 
             # Set the arg options and their params values
             self.arg_options[arg] = [val for val in arg_option_vals]
