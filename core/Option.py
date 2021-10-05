@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict
+from typing import Dict, Any
 
 class HandlerContext(Enum):
     CMD = "cmd"
@@ -11,7 +11,7 @@ class Option:
         name: str,
         aliases: list = [],
         usage: str = None,
-        params: list[Dict[str, str]] = [],
+        params: list[Dict[str, Dict[str, Any]]] = [],
         handler: str = None,
         context: HandlerContext = "before",
         required: bool = False,

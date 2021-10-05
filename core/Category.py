@@ -115,32 +115,51 @@ class Category:
         return methods
 
     def parse_args(self, args: list[str]):
-        self.logger.debug(args)
         pos_args = []
-        arg_option_indicies = []
+        arg_option_param_indicies = []
         option_names = self.option_set.get_names()
+        self.logger.debug(f"Args: {args}")
+
         for index, arg in enumerate(args):
+            self.logger.debug(f"Current Arg: {arg}")
             # This line will skip the indicies of arg option parameters
-            if index in arg_option_indicies:
+            if index in arg_option_param_indicies:
                 continue
 
             # If the arg doesn't match the arg_option_tag_pattern, then it
             # is a positional argument
             if re.match(rf"{self.arg_option_tag_pattern}", arg) == None:
                 pos_args.append(arg)
+                self.logger.debug(f"Pos Args: {pos_args}")
                 continue
 
             # Validate options against the category's option set
-            if arg in option_names:
-                option = self.option_set.get_by_name(arg)
-                params = option.params
-                num_of_params = len(params)
-                remaining_args = args[index:]
-                # If the number of args passed after the option is insufficient
-                # to satisfy the option, raise an exception
-                if  len(remaining_args) < num_of_params:
-                    raise Exception(f"Option {arg} expects {num_of_params} params: {params}. Only {len(remaining_args)} params providied")
-                arg_option_vals = args[index+1:index+1+num_of_params]
-                # Set the arg options and their params values
-                self.arg_option[arg] = (val for val in arg_option_vals)
+            if arg not in option_names:
+                raise Exception(f"{arg} is not a valid option for command {self.command}")
+
+            option = self.option_set.get_by_name(arg)
+            params = option.params.keys()
+            params_len = len(params)
+            remaining_args = args[index+1:]
+
+            # If the number of args passed after the option is insufficient
+            # to satisfy the option, raise an exception
+            if len(remaining_args) < params_len:
+                raise Exception(f"Option {arg} expects {params_len} params: {params}. Only {len(remaining_args)} params providied")
+            
+            next_arg_index = index + 1
+            last_arg_index = next_arg_index + params_len
+            arg_option_vals = args[next_arg_index:last_arg_index]
+            
+            for i in range(next_arg_index, last_arg_index):
+                arg_option_param_indicies.append(i)
+
+            # Set the arg options and their params values
+            self.arg_options[arg] = [val for val in arg_option_vals]
+
+            continue
+
+        return
+
+            
             

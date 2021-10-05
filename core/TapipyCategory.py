@@ -75,7 +75,7 @@ class TapipyCategory(Category):
 
     def set_operation(self, operation_name: str) -> None:
         """Sets the operation to be performed upon execution."""
-        self.command_name = operation_name
+        self.command = operation_name
         try:
             self.operation = getattr(self.resource, operation_name)
             return
