@@ -14,15 +14,19 @@ class Router:
     Commands and their options are passed into the router.
     The options are parsed and then the command is resolved.
     """
-    command_index: int = 0
-    logger: Logger = None
-    tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
-    kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
-    cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
-    space_replacement = ""
+    command_index: int
+    logger: type[Logger]
+    tag_value_pattern: str
+    kw_arg_tag_pattern: str
+    cmd_option_pattern: str
+    space_replacement: str
 
     def __init__(self):
+        self.command_index = 0
         self.logger = Logger()
+        self.tag_value_pattern = r"([\w\r\t\n!@#$%^&*()\-+\{\}\[\]|\\\/:;\"\'<>?\|,.`~=]*)"
+        self.kw_arg_tag_pattern = r"[-]{2}([\w]{1}[\w]*)"
+        self.cmd_option_pattern = r"^[-]{1}[a-z]+[a-z_]*$"
         buffer = "[*]"
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
