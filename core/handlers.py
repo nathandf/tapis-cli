@@ -10,12 +10,15 @@ def help(category):
 
 
 def jsonFileToKeywordArgs(category, args):
-    _, extension = os.path.splitext(category.arg_options["-j"])
+    filename = category.arg_options["-j"]["filename"]
+    _, extension = os.path.splitext(filename)
+    
     # Check that the extension of the file is '.json'
     if extension != ".json":
         raise Exception(f"Using argument option '-j' requires a json file argument. Provided: '{extension}'")
+    
     # Convert the definition file into a json object
-    obj = json.loads(open(category.arg_options["-j"], "r").read())
+    obj = json.loads(open(filename, "r").read())
     for item, value in obj.items():
         category.kw_args[item] = value
     

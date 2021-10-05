@@ -38,7 +38,7 @@ option_registrar.register("TapipyCategory", [
     Option("-f",
         aliases=["-file, -contents"],
         usage="a filename",
-        params={"filename": {type: str}, "something": {type: int}},
+        params={"filename": {type: str}},
         handler="fileContentsToPositionalArg"
     )
 ])

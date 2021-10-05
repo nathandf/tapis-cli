@@ -28,14 +28,16 @@ class TapipyCategory(Category):
             raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
 
     def execute(self, args) -> None:
-        """Overwrites the execute method to call the Tapipy client directly."""
-        self.parse_args(args)
+        """Overwrites the execute method to invoke Tapipy Operations directly."""
+
+        args = self.parse_args(args)
+
         try:
             handlers = { "cmd": [], "before": [], "after": [] }
-            for option in self.option_set:
+            for option in self.option_set.options:
                 # If the current option from the option set has not been provided by the user,
                 # ignore it
-                if option.name not in self.options and option.name not in self.arg_options:
+                if option.name not in self.cmd_options and option.name not in self.arg_options:
                     continue
                 
                 # If the current option from the option set HAS been provided but there is

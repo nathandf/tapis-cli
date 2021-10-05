@@ -8,7 +8,7 @@ import re
 import sys
 import types
 
-from typing import List, Dict
+from typing import ByteString, List, Dict
 
 from utils.Logger import Logger
 from core.OptionSet import OptionSet
@@ -23,7 +23,7 @@ class Category:
     option_set: type[OptionSet]
     cmd_options: list
     kw_args: Dict[str, str]
-    arg_options: Dict[str, List[str]]
+    arg_options: Dict[str, Dict[str, str]]
     command: str
     override_exec: bool
     logger: type[Logger]
@@ -80,10 +80,6 @@ class Category:
         self.kw_args = kw_args
         return
 
-    def set_arg_options(self, arg_options: Dict[str, List[str]]) -> None:
-        self.arg_options = arg_options
-        return
-
     def execute(self, args: List[str]) -> None:
         if self.override_exec:
             return
@@ -116,12 +112,13 @@ class Category:
 
     def parse_args(self, args: list[str]):
         pos_args = []
-        arg_option_param_indices = []
+        arg_opt_indices = []
         option_names = self.option_set.get_names()
 
         for index, arg in enumerate(args):
-            # This line will skip the indices of arg option parameters
-            if index in arg_option_param_indices:
+            # This line will skip the indices of arg option parameters 
+            # that were added in previous iterations
+            if index in arg_opt_indices:
                 continue
 
             # If the arg doesn't match the arg_option_tag_pattern, then it
@@ -130,33 +127,46 @@ class Category:
                 pos_args.append(arg)
                 continue
 
-            # Validate options against the category's option set
+            # Validate user provided options against the category's option set
             if arg not in option_names:
                 raise Exception(f"{arg} is not a valid option for command {self.command}")
 
+            # Gets the option by name from the OptionSet
             option = self.option_set.get_by_name(arg)
-            params = option.params.keys()
+
+            # Make a list of the params and calculate the len
+            params = list(option.params.keys())
             params_len = len(params)
+
+            # Create a list of the remaining args. This will be used to check if
+            # there are a sufficient number args left to satisfy the current option's
+            # parameter requirements
             remaining_args = args[index+1:]
 
-            # If the number of args passed after the option is insufficient
-            # to satisfy the option, raise an exception
+            # If there are fewer remaining args than params, raise an exception
             if len(remaining_args) < params_len:
                 raise Exception(f"Option {arg} expects {params_len} params: {params}. Only {len(remaining_args)} params providied")
             
+            # Calculate the indices of the args that correspond to the current
+            # option's params
             next_arg_index = index + 1
             last_arg_index = next_arg_index + params_len
             arg_option_vals = args[next_arg_index:last_arg_index]
             
-            for i in range(next_arg_index, last_arg_index):
-                arg_option_param_indices.append(i)
+            # Add the to the arg_opt_indices list so that we can skip it
+            # in subsequent iterations
+            for index in range(next_arg_index, last_arg_index):
+                arg_opt_indices.append(index)
 
-            # Set the arg options and their params values
-            self.arg_options[arg] = [val for val in arg_option_vals]
+            # Create a nested dictionary with arg_options as the key, and a
+            # value of { param_name: option_value }
+            self.arg_options[arg] = {}
+            for index, val in enumerate(arg_option_vals):
+                self.arg_options[arg][params[index]] = val
 
             continue
-
-        return
+        
+        return pos_args
 
             
             
