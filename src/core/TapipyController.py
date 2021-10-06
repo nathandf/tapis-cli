@@ -31,7 +31,8 @@ class TapipyController(Controller):
         result = None
 
         try:
-            handlers = { "generic": [], "before": [], "after": [] }
+            self.logger.debug(f"Arg Options: {self.arg_options}")
+            handlers = { "generic": [], "args": [], "result": [] }
             for option in self.option_set.options:
                 # If the current option from the option set has not been provided by the user,
                 # ignore it
@@ -45,11 +46,13 @@ class TapipyController(Controller):
                 
                 # Register the handler
                 handlers[option.context].append(getattr(options.handlers, option.handler))
+
+            self.logger.debug(f"Handlers: {handlers}")
             
             for handler in handlers["generic"]:
                 handler(self)
 
-            for handler in handlers["before"]:
+            for handler in handlers["args"]:
                 args = handler(self, args)
 
             # Check that all keyword args for a given operation are
@@ -58,12 +61,12 @@ class TapipyController(Controller):
 
             result = self.operation(*args, **self.kw_args)
 
-            for handler in handlers["after"]:
+            for handler in handlers["result"]:
                 result = handler(self, result)
             
             if self.view == None:
                 self.set_view("TapisResultTableView", result)
-                
+
             self.view.render()
 
             return

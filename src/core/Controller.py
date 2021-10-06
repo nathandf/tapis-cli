@@ -139,7 +139,7 @@ class Controller:
             option = self.option_set.get_by_name(arg)
 
             # Make a list of the params and calculate the len
-            params = list(option.params.keys())
+            params = list(option.params.keys()) if option.params is not {} else []
             params_len = len(params)
 
             # Create a list of the remaining args. This will be used to check if

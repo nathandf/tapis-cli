@@ -31,17 +31,29 @@ option_registrar.register("TapipyController", [
         handler="help"
     ),
     Option("-j", 
-        aliases=["-json", "-jk"],
+        aliases=["-json"],
         usage="a json filename",
         params={"filename": {type: str}},
         handler="jsonFileToKeywordArgs"
     ),
+    Option("-r", 
+        aliases=["-tapis-raw"],
+        usage="",
+        context="result",
+        handler="tapisResultRawView"
+    ),
     Option("-s", 
-        aliases=["-save", "-output"],
+        aliases=["-save"],
         usage="save results of a controller invocation to a file",
         params={"filename": {type: str}},
-        context="after",
-        handler="resultsToFile"
+        context="result",
+        handler="resultToFile"
+    ),
+    Option("-t", 
+        aliases=["-tapis-table"],
+        usage="",
+        context="result",
+        handler="tapisResultTableView"
     ),
     Option("-v",
         aliases=["-verbose"],

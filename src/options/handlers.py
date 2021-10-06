@@ -30,8 +30,18 @@ def jsonFileToKeywordArgs(controller, args):
     return args
 
 def resultToFile(controller, result):
+    data = result.__str__()
+
     filename = controller.arg_options["-s"]["filename"]
     with open(filename, "w") as file:
-        file.write(json.dumps(result))
+        file.write(data)
 
+    return result
+
+def tapisResultRawView(controller, result):
+    controller.set_view("TapisResultRawView", result)
+    return result
+
+def tapisResultTableView(controller, result):
+    controller.set_view("TapisResultTableView", result)
     return result

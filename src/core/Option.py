@@ -3,17 +3,17 @@ from typing import Dict, Any
 
 class HandlerContext(Enum):
     GENERIC = "generic"
-    BEFORE = "before"
-    AFTER = "after"
+    ARGS = "args"
+    RESULT = "result"
 
 class Option:
     def __init__(self,
         name: str,
         aliases: list = [],
         usage: str = None,
-        params: list[Dict[str, Dict[str, Any]]] = [],
+        params: Dict[str, Dict[str, Any]] = {},
         handler: str = None,
-        context: HandlerContext = "before",
+        context: HandlerContext = "args",
         required: bool = False,
         require: list = [],
         exclude: list = [],
