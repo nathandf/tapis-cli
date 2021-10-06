@@ -4,8 +4,8 @@ from core.Router import Router
 
 def main():
     """Resolve the category, command, options, and arguments, then execute them."""
-    (category, args) = Router().resolve(sys.argv[1:])
-    category.execute(args)
+    (controller, args) = Router().resolve(sys.argv[1:])
+    controller.invoke(args)
     
 if __name__ == "__main__":
     main()

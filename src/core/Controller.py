@@ -84,7 +84,7 @@ class Controller:
         self.kw_args = kw_args
         return
 
-    def execute(self, args: List[str]) -> None:
+    def invoke(self, args: List[str]) -> None:
         if self.override_exec:
             return
 
@@ -172,12 +172,14 @@ class Controller:
         
         return pos_args
 
-    def create_view(self, name: str, data: Any):
+    def set_view(self, name: str, data: Any) -> None:
         view_class = load(f"views.{name}", name)
         if view_class is None:
             raise Exception("View '{name}' does not exist")
 
-        return view_class(data)
+        self.view = view_class(data)
+
+        return
 
             
             

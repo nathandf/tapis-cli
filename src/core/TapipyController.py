@@ -25,7 +25,7 @@ class TapipyController(Controller):
         except:
             raise ValueError(f"Unable to authenticate user using AUTH_METHOD {settings.AUTH_METHOD}\n")
 
-    def execute(self, args) -> None:
+    def invoke(self, args) -> None:
         """Overwrites the execute method to invoke Tapipy Operations directly."""
         args = self.parse_args(args)
         result = None
@@ -61,8 +61,10 @@ class TapipyController(Controller):
             for handler in handlers["after"]:
                 result = handler(self, result)
             
-            view = self.create_view("TapisResultTableView", result)
-            view.render()
+            if self.view == None:
+                self.set_view("TapisResultTableView", result)
+                
+            self.view.render()
 
             return
 

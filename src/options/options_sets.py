@@ -18,10 +18,11 @@ option_registrar.register("core", [
 ])
 
 option_registrar.register("TapipyController", [
-    Option("-v",
-        aliases=["-verbose"],
-        usage="show additional information for a command invocation",
-        context="generic"
+    Option("-f",
+        aliases=["-file, -contents"],
+        usage="a filename",
+        params={"filename": {type: str}},
+        handler="fileContentsToPositionalArg"
     ),
     Option("-h",
         aliases=["-help"],
@@ -35,11 +36,17 @@ option_registrar.register("TapipyController", [
         params={"filename": {type: str}},
         handler="jsonFileToKeywordArgs"
     ),
-    Option("-f",
-        aliases=["-file, -contents"],
-        usage="a filename",
+    Option("-s", 
+        aliases=["-save", "-output"],
+        usage="save results of a controller invocation to a file",
         params={"filename": {type: str}},
-        handler="fileContentsToPositionalArg"
+        context="after",
+        handler="resultsToFile"
+    ),
+    Option("-v",
+        aliases=["-verbose"],
+        usage="show additional information for a command invocation",
+        context="generic"
     )
 ])
 

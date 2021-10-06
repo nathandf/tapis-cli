@@ -1,5 +1,11 @@
 import os, json
 
+def fileContentsToPositionalArg(controller, args):
+    file_contents = open(controller.arg_options["-f"], "rb").read()
+    args.append(file_contents)
+
+    return args
+
 def help(controller):
     if hasattr(controller, "help"):
         controller.override_exec = True
@@ -7,7 +13,6 @@ def help(controller):
         return
     
     controller.logger.warn(f"controller '{type(controller).__name__}' has no help option for the {controller.command} command")
-
 
 def jsonFileToKeywordArgs(controller, args):
     filename = controller.arg_options["-j"]["filename"]
@@ -24,8 +29,9 @@ def jsonFileToKeywordArgs(controller, args):
     
     return args
 
-def fileContentsToPositionalArg(controller, args):
-    file_contents = open(controller.arg_options["-f"], "rb").read()
-    args.append(file_contents)
+def resultToFile(controller, result):
+    filename = controller.arg_options["-s"]["filename"]
+    with open(filename, "w") as file:
+        file.write(json.dumps(result))
 
-    return args
+    return result
