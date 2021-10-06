@@ -8,10 +8,12 @@ import re
 import sys
 import types
 
-from typing import ByteString, List, Dict
+from typing import List, Dict, Any
 
+from utils.module_loader import class_loader as load
 from utils.Logger import Logger
 from core.OptionSet import OptionSet
+from core.AbstractView import AbstractView
 from options.options_sets import option_registrar
 
 class Controller:
@@ -29,6 +31,7 @@ class Controller:
     logger: type[Logger]
     exit: callable
     arg_option_tag_pattern: str
+    view: type[AbstractView]
 
     def __init__(self):
         self.option_set = option_registrar.get_option_set(type(self).__name__)
@@ -40,6 +43,7 @@ class Controller:
         self.logger = Logger()
         self.exit = sys.exit
         self.arg_option_tag_pattern = r"([-]{1}[\w]{1}[\w]*)"
+        self.view = None
 
     def help(self):
         """
@@ -167,6 +171,13 @@ class Controller:
             continue
         
         return pos_args
+
+    def create_view(self, name: str, data: Any):
+        view_class = load(f"views.{name}", name)
+        if view_class is None:
+            raise Exception("View '{name}' does not exist")
+
+        return view_class(data)
 
             
             

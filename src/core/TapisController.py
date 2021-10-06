@@ -9,7 +9,6 @@ from configs import settings
 from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
 
-
 class TapisController(Controller):
     """A TAPIS-specific Controller."""
     client: Union[Tapis, None] = None

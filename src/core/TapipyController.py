@@ -1,11 +1,8 @@
-from tabulate import tabulate
-
 import options.handlers
 
 from configs import settings
 from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
-from views.TableView import TableView
 
 class TapipyController(Controller):
     """
@@ -30,8 +27,8 @@ class TapipyController(Controller):
 
     def execute(self, args) -> None:
         """Overwrites the execute method to invoke Tapipy Operations directly."""
-        tv = TableView()
         args = self.parse_args(args)
+        result = None
 
         try:
             handlers = { "generic": [], "before": [], "after": [] }
@@ -63,14 +60,10 @@ class TapipyController(Controller):
 
             for handler in handlers["after"]:
                 result = handler(self, result)
+            
+            view = self.create_view("TapisResultTableView", result)
+            view.render()
 
-            if type(result) == list:
-                for _, item in enumerate(result):
-                    self.logger.log(tabulate(vars(item).items(), tablefmt="fancy_grid"))
-                
-                return
-
-            self.logger.log(tabulate(vars(result).items(), ["Key", "Value"], tablefmt="fancy_grid"))
             return
 
         except Exception as e:
