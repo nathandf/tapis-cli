@@ -5,6 +5,7 @@ import options.handlers
 from configs import settings
 from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
+from views.TableView import TableView
 
 class TapipyController(Controller):
     """
@@ -29,11 +30,11 @@ class TapipyController(Controller):
 
     def execute(self, args) -> None:
         """Overwrites the execute method to invoke Tapipy Operations directly."""
-
+        tv = TableView()
         args = self.parse_args(args)
 
         try:
-            handlers = { "cmd": [], "before": [], "after": [] }
+            handlers = { "generic": [], "before": [], "after": [] }
             for option in self.option_set.options:
                 # If the current option from the option set has not been provided by the user,
                 # ignore it
@@ -48,7 +49,7 @@ class TapipyController(Controller):
                 # Register the handler
                 handlers[option.context].append(getattr(options.handlers, option.handler))
             
-            for handler in handlers["cmd"]:
+            for handler in handlers["generic"]:
                 handler(self)
 
             for handler in handlers["before"]:

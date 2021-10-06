@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Dict, Any
 
 class HandlerContext(Enum):
-    CMD = "cmd"
+    GENERIC = "generic"
     BEFORE = "before"
     AFTER = "after"
 

@@ -7,12 +7,12 @@ option_registrar.register("core", [
     Option("-a",
         aliases=["-verbose"],
         usage="show additional information for a command invocation",
-        context="cmd"
+        context="generic"
     ),
     Option("-b",
         aliases=["-help"],
         usage="display help information for a command",
-        context="cmd",
+        context="generic",
         handler="help"
     )
 ])
@@ -21,12 +21,12 @@ option_registrar.register("TapipyController", [
     Option("-v",
         aliases=["-verbose"],
         usage="show additional information for a command invocation",
-        context="cmd"
+        context="generic"
     ),
     Option("-h",
         aliases=["-help"],
         usage="display help information for a command",
-        context="cmd",
+        context="generic",
         handler="help"
     ),
     Option("-j", 
