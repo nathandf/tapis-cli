@@ -11,11 +11,12 @@ from utils.Logger import Logger
 
 class Authenticator:
     """Authorization credentials are parsed here."""
-    base_url = ""
-    auth_methods = settings.AUTH_METHODS
+    base_url: str
+    auth_methods: str
 
     def __init__(self, base_url=settings.BASE_URL):
         self.base_url = base_url
+        self.auth_methods = settings.AUTH_METHODS
         self.logger = Logger()
         self.config = Configuration()
 
