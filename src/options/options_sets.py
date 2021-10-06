@@ -17,7 +17,7 @@ option_registrar.register("core", [
     )
 ])
 
-option_registrar.register("TapipyCategory", [
+option_registrar.register("TapipyController", [
     Option("-v",
         aliases=["-verbose"],
         usage="show additional information for a command invocation",
@@ -43,4 +43,4 @@ option_registrar.register("TapipyCategory", [
     )
 ])
 
-option_registrar.uses("TapipyCategory", "core")
+option_registrar.uses("TapipyController", "core")

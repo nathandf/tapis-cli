@@ -2,14 +2,14 @@
 
 import json
 
-from core.TapisCategory import TapisCategory
+from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError
 
 
-class Systems(TapisCategory):
+class Systems(TapisController):
     """Contains all of the CRUD functions associated with systems."""
     def __init__(self):
-        TapisCategory.__init__(self)
+        TapisController.__init__(self)
 
     def available(self, system_id) -> None:
         """Check if a system is currently enabled."""

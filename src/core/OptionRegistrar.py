@@ -16,12 +16,12 @@ class OptionRegistrar:
         self.registered_names = []
         self.registered_aliases = []
 
-    def register(self, category: str, options: List[type[Option]]) -> None:
-        # Do not allow options to be registered for a single category more than once
-        if category in self.option_sets.keys():
-            raise Exception(f"Category '{category}' already has registered options")
+    def register(self, controller: str, options: List[type[Option]]) -> None:
+        # Do not allow options to be registered for a single controller more than once
+        if controller in self.option_sets.keys():
+            raise Exception(f"Controller '{controller}' already has registered options")
 
-        self.option_sets[category] = OptionSet()
+        self.option_sets[controller] = OptionSet()
 
         # # Validate the uniqueness of option names and aliases
         for option in options:
@@ -39,7 +39,7 @@ class OptionRegistrar:
                     raise ValueError(f"Alias naming collision: Alias '{alias}' is already registered")
                 
             self.registered_aliases = self.registered_aliases + option.aliases
-            self.option_sets[category].add(option)
+            self.option_sets[controller].add(option)
 
         # Reset the value of registered names and aliases for each call of the
         # register function
@@ -48,17 +48,17 @@ class OptionRegistrar:
 
         return
 
-    def get_option_set(self, category) -> type[OptionSet]:
-        if category in self.option_sets.keys():
-            return self.option_sets[category]
+    def get_option_set(self, controller) -> type[OptionSet]:
+        if controller in self.option_sets.keys():
+            return self.option_sets[controller]
                 
         return self.option_sets["core"]
 
-    # Combine the options of one category to another. Specific options
+    # Combine the options of one controller to another. Specific options
     # can be selected by providing a list with the options' name in the
     # options keyword. If strict is set to True, an error will be thrown
     # categories contain duplicate option names. Otherwise, the options 
-    # in the to_category will be overwritten.
+    # in the to_controller will be overwritten.
     # TODO implement
-    def uses(self, to_category, from_category, options=[], strict=True):
+    def uses(self, to_controller, from_controller, options=[], strict=True):
         pass

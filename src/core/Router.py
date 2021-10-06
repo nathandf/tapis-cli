@@ -5,8 +5,8 @@ from importlib.util import find_spec
 from importlib import import_module
 from typing import List, Tuple, Dict
 
-from core.Category import Category
-from core.TapipyCategory import TapipyCategory
+from core.Controller import Controller
+from core.TapipyController import TapipyController
 from utils.Logger import Logger
 
 class Router:
@@ -30,57 +30,57 @@ class Router:
         buffer = "[*]"
         self.space_replacement = buffer.join(random.choice(string.punctuation) for _ in range(5)) + buffer
 
-    def resolve(self, args: List[str]) -> Tuple[Category, List[str]]:
+    def resolve(self, args: List[str]) -> Tuple[Controller, List[str]]:
         """The command is resolved here."""
 
-        # Category name
-        category_name: str = args.pop(0)
+        # Controller name
+        controller_name: str = args.pop(0)
 
         # Parse the arguments and extract the values
         (cmd_name, cmd_options, kw_args, args) = self.resolve_args(args)
         
         # The first step of command resolution is to check if a 
-        # user-defined category exists by the name provided in args.
-        if find_spec(f"categories.{category_name.capitalize()}") is not None:
-            # Import the category
-            module = import_module( f"categories.{category_name.capitalize()}", "./" )
-            category_class: type[Category] = getattr(module, f"{category_name.capitalize()}")
+        # user-defined controller exists by the name provided in args.
+        if find_spec(f"controllers.{controller_name.capitalize()}") is not None:
+            # Import the controller
+            module = import_module( f"controllers.{controller_name.capitalize()}", "./" )
+            controller_class: type[Controller] = getattr(module, f"{controller_name.capitalize()}")
 
-            if not hasattr(category_class, cmd_name):
-                # If the command being invoked doesn't exist on the category, 
-                # instantiate an TapipyCategory
-                category = TapipyCategory()
+            if not hasattr(controller_class, cmd_name):
+                # If the command being invoked doesn't exist on the controller, 
+                # instantiate an TapipyController
+                controller = TapipyController()
                 # Set the resource, operation, and options
-                category.set_resource(category_name)
-                category.set_operation(cmd_name)
-                category.set_cmd_options(cmd_options)
-                category.set_kw_args(kw_args)
+                controller.set_resource(controller_name)
+                controller.set_operation(cmd_name)
+                controller.set_cmd_options(cmd_options)
+                controller.set_kw_args(kw_args)
 
-                return (category, args)
+                return (controller, args)
             
-            # The category class has a method by the command name.
-            # Instantiate the category class
-            category = category_class()
+            # The controller class has a method by the command name.
+            # Instantiate the controller class
+            controller = controller_class()
 
             # Set the options and command
-            category.set_command(cmd_name)
-            category.set_cmd_options(cmd_options)
-            category.set_kw_args(kw_args)
+            controller.set_command(cmd_name)
+            controller.set_cmd_options(cmd_options)
+            controller.set_kw_args(kw_args)
 
-            # Return the category with command and options set.
-            return (category, args)
+            # Return the controller with command and options set.
+            return (controller, args)
 
-        # If a user-defined category doesn't exist, return an instance
-        # of core.TapipyCategory
-        category = TapipyCategory()
+        # If a user-defined controller doesn't exist, return an instance
+        # of core.TapipyController
+        controller = TapipyController()
 
         # Set the resource, operation, and options
-        category.set_resource(category_name)
-        category.set_operation(cmd_name)
-        category.set_cmd_options(cmd_options)
-        category.set_kw_args(kw_args)
+        controller.set_resource(controller_name)
+        controller.set_operation(cmd_name)
+        controller.set_cmd_options(cmd_options)
+        controller.set_kw_args(kw_args)
 
-        return (category, args)
+        return (controller, args)
         
         
     def parse_cmd_options(self, args: List[str]) -> Tuple[List[str], List[str]]:
@@ -141,7 +141,7 @@ class Router:
         # index of the command name via self.command_index
         (cmd_options, args) = self.parse_cmd_options(args)
 
-        # Get the command for the category from the modified args list.
+        # Get the command for the controller from the modified args list.
         cmd_name = args.pop(0)
 
         # Parse the keyword arguments and their values from the args list

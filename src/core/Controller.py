@@ -14,7 +14,7 @@ from utils.Logger import Logger
 from core.OptionSet import OptionSet
 from options.options_sets import option_registrar
 
-class Category:
+class Controller:
     """ 
     Each category has the same methods available to get/set/execute.
     If the user wants to add non-TAPIS categories and commands, the new parser

@@ -3,14 +3,14 @@
 from datetime import datetime
 import json
 
-from core.TapisCategory import TapisCategory
+from core.TapisController import TapisController
 from tapipy.errors import InvalidInputError
 
 
-class Jobs(TapisCategory):
+class Jobs(TapisController):
     """Contains all of the CRUD functions associated with jobs."""
     def __init__(self):
-        TapisCategory.__init__(self)
+        TapisController.__init__(self)
 
     def download(self, uuid, output_path) -> None:
         """Downloads the output of a completed job."""

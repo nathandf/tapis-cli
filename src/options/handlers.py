@@ -1,16 +1,16 @@
 import os, json
 
-def help(category):
-    if hasattr(category, "help"):
-        category.override_exec = True
-        category.help()
+def help(controller):
+    if hasattr(controller, "help"):
+        controller.override_exec = True
+        controller.help()
         return
     
-    category.logger.warn(f"Category '{type(category).__name__}' has no help option for the {category.command} command")
+    controller.logger.warn(f"controller '{type(controller).__name__}' has no help option for the {controller.command} command")
 
 
-def jsonFileToKeywordArgs(category, args):
-    filename = category.arg_options["-j"]["filename"]
+def jsonFileToKeywordArgs(controller, args):
+    filename = controller.arg_options["-j"]["filename"]
     _, extension = os.path.splitext(filename)
     
     # Check that the extension of the file is '.json'
@@ -20,12 +20,12 @@ def jsonFileToKeywordArgs(category, args):
     # Convert the definition file into a json object
     obj = json.loads(open(filename, "r").read())
     for item, value in obj.items():
-        category.kw_args[item] = value
+        controller.kw_args[item] = value
     
     return args
 
-def fileContentsToPositionalArg(category, args):
-    file_contents = open(category.arg_options["-f"], "rb").read()
+def fileContentsToPositionalArg(controller, args):
+    file_contents = open(controller.arg_options["-f"], "rb").read()
     args.append(file_contents)
 
     return args

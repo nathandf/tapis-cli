@@ -3,10 +3,10 @@ from tabulate import tabulate
 import options.handlers
 
 from configs import settings
-from core.Category import Category
+from core.Controller import Controller
 from core.Authenticator import Authenticator as Auth
 
-class TapipyCategory(Category):
+class TapipyController(Controller):
     """
     Handles the parsing and execution of commands specified in the OpenAPI specs.
 
@@ -17,7 +17,7 @@ class TapipyCategory(Category):
     resource = None
 
     def __init__(self):
-        Category.__init__(self)
+        Controller.__init__(self)
         try:
             self.client = Auth().authenticate()
             if self.client == None:
