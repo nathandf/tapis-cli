@@ -12,7 +12,7 @@ from typing import ByteString, List, Dict
 
 from utils.Logger import Logger
 from core.OptionSet import OptionSet
-from core.options import option_registrar
+from options.options_sets import option_registrar
 
 class Category:
     """ 

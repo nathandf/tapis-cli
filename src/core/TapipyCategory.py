@@ -1,6 +1,6 @@
 from tabulate import tabulate
 
-import core.handlers
+import options.handlers
 
 from configs import settings
 from core.Category import Category
@@ -42,11 +42,11 @@ class TapipyCategory(Category):
                 
                 # If the current option from the option set HAS been provided but there is
                 # no handler specified, ignore it
-                if option.handler == None or not hasattr(core.handlers, option.handler):
+                if option.handler == None or not hasattr(options.handlers, option.handler):
                     continue
                 
                 # Register the handler
-                handlers[option.context].append(getattr(core.handlers, option.handler))
+                handlers[option.context].append(getattr(options.handlers, option.handler))
             
             for handler in handlers["cmd"]:
                 handler(self)
