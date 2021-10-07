@@ -10,9 +10,9 @@ tapis-cli can be set up and run in 2 ways; Locally, and in a Docker container.
 `git clone https://github.com/nathandf/tapis-cli.git`
 
 **Navigate to the 'src' directory of the project where tapis.sh is found**\
-`cd ./tapis-cli>`
+`cd ./tapis-cli/src`
 
-**Initialze a virtual env**\
+**Initialize a virtual env**\
 `pipenv shell`
 
 **Install Tapipy**\
