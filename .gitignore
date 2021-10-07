@@ -1,6 +1,7 @@
 # Auth credentials
-configs/
-!configs/settings.py
+src/configs/*
+!src/configs/settings.py
+!src/configs/options.py
 
 # Definitions for tapis entities
 definitions
