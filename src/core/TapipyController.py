@@ -31,7 +31,6 @@ class TapipyController(Controller):
         result = None
 
         try:
-            self.logger.debug(f"Arg Options: {self.arg_options}")
             handlers = { "generic": [], "args": [], "result": [] }
             for option in self.option_set.options:
                 # If the current option from the option set has not been provided by the user,
@@ -46,8 +45,6 @@ class TapipyController(Controller):
                 
                 # Register the handler
                 handlers[option.context].append(getattr(options.handlers, option.handler))
-
-            self.logger.debug(f"Handlers: {handlers}")
             
             for handler in handlers["generic"]:
                 handler(self)
@@ -103,4 +100,4 @@ class TapipyController(Controller):
         kw_arg_keys = self.kw_args.keys()
         for param in required_params:
             if param not in kw_arg_keys:
-                raise Exception(f"'{param}' is a required keyword argument. Required keyword arguments: {required_params}")
+                raise Exception(f"Missing required keyword arguments: {[f'--{param}' for param in required_params if param not in self.kw_args.keys()]}")
